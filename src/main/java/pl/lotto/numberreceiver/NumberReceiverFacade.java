@@ -2,8 +2,7 @@ package pl.lotto.numberreceiver;
 
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.Set;
 
 public class NumberReceiverFacade {
 
@@ -14,10 +13,9 @@ public class NumberReceiverFacade {
     public static final String FAILED_USER_MESSAGE = "failed";
     public static final String SUCCESS_USER_MESSAGE = "correct";
 
-    public NumberReceiverResponseDto inputNumbers(List<Integer> numbersFromUser) {
-        boolean isOutOfRange = numbersFromUser.stream()
-                .anyMatch(isNumberOutOfRange());
-        if (isOutOfRange) {
+    public NumberReceiverResponseDto inputNumbers(Set<Integer> numbersFromUser) {
+
+        if (isNumberOutOfRange(numbersFromUser)) {
             return new NumberReceiverResponseDto(FAILED_USER_MESSAGE);
         }
         if(!didUserGiveSixNumbers(numbersFromUser)){
@@ -26,11 +24,15 @@ public class NumberReceiverFacade {
         return new NumberReceiverResponseDto(SUCCESS_USER_MESSAGE);
     }
 
-    private static boolean didUserGiveSixNumbers(List<Integer> numbersFromUser) {
+    private static boolean didUserGiveSixNumbers(Set<Integer> numbersFromUser) {
         return numbersFromUser.size() == QUANTITY_OF_NUMBERS_FROM_USER;
     }
 
-    private static Predicate<Integer> isNumberOutOfRange() {
-        return integer -> integer > MAX_VALUE_NUMBER_FROM_USER || integer < MIN_VALUE_NUMBER_FROM_USER;
+    private static boolean isNumberOutOfRange(Set<Integer> numbersFromUser) {
+        for (Integer number : numbersFromUser) {
+            if(number > MAX_VALUE_NUMBER_FROM_USER || number < MIN_VALUE_NUMBER_FROM_USER)
+                return true;
+        }
+        return false;
     }
 }
