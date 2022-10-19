@@ -4,7 +4,9 @@ import java.util.List;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 
 public class NumberReceiverFacade {
-    NumberReceiverResponseDto inputNumbers(List<Integer> integers) {
+
+
+    public NumberReceiverResponseDto inputNumbers(List<Integer> integers) {
         return new NumberReceiverResponseDto("correct");
     }
 }
