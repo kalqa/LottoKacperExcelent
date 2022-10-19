@@ -35,12 +35,33 @@ public class NumberReceiverFacadeTest {
         assertThat(response).isEqualTo(expectedResponse);
     }
 
-//    @Test
-//    public void should_return_failed_message_when_user_input_less_than_six_numbers() {
-//        // given
-//        // when
-//        // then
-//    }
+    @Test
+    public void should_return_failed_message_when_user_input_six_numbers_but_one_number_is_out_of_range_and_is_negative() {
+        // given
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade();
+        List<Integer> numbersFromUser = List.of(1, 2, 3, -4, 5, 6);
+
+        // when
+        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
+
+        // then
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto("failed");
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    public void should_return_failed_message_when_user_input_less_than_six_numbers() {
+        // given
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade();
+        List<Integer> numbersFromUser = List.of(1, 2, 3, 4, 5);
+
+        // when
+        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
+
+        // then
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto("failed");
+        assertThat(response).isEqualTo(expectedResponse);
+    }
 //
 //    @Test
 //    public void should_return_failed_message_when_user_input_more_than_six_numbers() {
