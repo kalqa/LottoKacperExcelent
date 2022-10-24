@@ -1,6 +1,7 @@
 package pl.lotto.numbergenerator;
 
 import org.junit.jupiter.api.Test;
+import pl.lotto.numbergenerator.dto.WinningNumbersDto;
 
 import java.util.Set;
 
@@ -13,9 +14,9 @@ public class WinningNumbersGeneratorFacadeTest {
         //given
         WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade();
         //when
-        Set<Integer> generatedNumbers = numbersGenerator.generateWinningNumbers();
+        WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
-        assertThat(generatedNumbers.size()).isEqualTo(6);
+        assertThat(generatedNumbers.getWinningNumbers().size()).isEqualTo(6);
     }
 
     //TODO: Czy testuje się randomowe liczby jak tak to jak ?

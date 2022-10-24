@@ -1,5 +1,6 @@
 package pl.lotto.numberreceiver.dto;
 
 public enum NumberReceiverResponseDto {
-    FAILED, SUCCESS
+        INPUT_ERROR, INPUT_SUCCESS
+
 }
