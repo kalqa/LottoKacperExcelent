@@ -1,3 +1,5 @@
 package pl.lotto.numberreceiver.dto;
 
-public record NumberReceiverResponseDto(String message) { }
+public enum NumberReceiverResponseDto {
+    FAILED, SUCCESS
+}

@@ -19,7 +19,7 @@ public class NumberReceiverFacadeTest {
         NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
 
         // then
-        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto("correct");
+        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.SUCCESS;
         assertThat(response).isEqualTo(expectedResponse);
     }
 
@@ -33,7 +33,7 @@ public class NumberReceiverFacadeTest {
         NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
 
         // then
-        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto("failed");
+        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.FAILED;
         assertThat(response).isEqualTo(expectedResponse);
     }
 
@@ -47,7 +47,7 @@ public class NumberReceiverFacadeTest {
         NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
 
         // then
-        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto("failed");
+        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.FAILED;
         assertThat(response).isEqualTo(expectedResponse);
     }
 
@@ -61,7 +61,7 @@ public class NumberReceiverFacadeTest {
         NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
 
         // then
-        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto("failed");
+        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.FAILED;
         assertThat(response).isEqualTo(expectedResponse);
     }
 
@@ -75,7 +75,7 @@ public class NumberReceiverFacadeTest {
         NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
 
         // then
-        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto("failed");
+        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.FAILED;
         assertThat(response).isEqualTo(expectedResponse);
     }
 }
