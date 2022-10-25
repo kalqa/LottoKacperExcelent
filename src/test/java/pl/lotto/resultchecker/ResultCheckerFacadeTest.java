@@ -1,9 +1,11 @@
 package pl.lotto.resultchecker;
 
 import org.junit.jupiter.api.Test;
-import pl.lotto.resultchecker.dto.ResultCheckerResponseDto;
+import pl.lotto.numberreceiver.dto.TicketDto;
 
+import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,29 +13,98 @@ class ResultCheckerFacadeTest {
 
 
     @Test
-    public void it_should_return_winning_message_when_input_numbers_are_winning_numbers(){
+    public void it_should_return_ticket_with_all_matching_numbers_if_ticket_is_a_winning_ticket(){
         //given
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade();
-        Set<Integer> inputNumbers = Set.of(1,2,3,4,5,6);
+        String hash = UUID.randomUUID().toString();
+        TicketDto ticket = TicketDto.builder()
+                .hash(hash)
+                .numbers(Set.of(1, 2, 3, 4, 5, 6))
+                .drawDate(LocalDate.now())
+                .build();
         Set<Integer> winningNumbers = Set.of(1,2,3,4,5,6);
         //when
-        ResultCheckerResponseDto response = resultCheckerFacade.generateResult(inputNumbers, winningNumbers);
+        Set<Integer> resultNumbers = resultCheckerFacade.generateResult(ticket, winningNumbers).getNumbers();
         //then
-        ResultCheckerResponseDto expectedResponse = ResultCheckerResponseDto.WINNING_NUMBERS;
-        assertThat(response).isEqualTo(expectedResponse);
+        Set<Integer> expectedResult = Set.of(1, 2, 3, 4, 5, 6);
+        assertThat(resultNumbers).isEqualTo(expectedResult);
     }
 
     @Test
-    public void it_should_return_loosing_message_when_input_numbers_are_not_winning_numbers(){
+    public void it_should_return_ticket_with_empty_set_if_no_matching_numbers(){
         //given
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade();
-        Set<Integer> inputNumbers = Set.of(1,2,3,4,5,6);
-        Set<Integer> winningNumbers = Set.of(1,2,3,4,5,7);
+        String hash = UUID.randomUUID().toString();
+        TicketDto ticket = TicketDto.builder()
+                .hash(hash)
+                .numbers(Set.of(1, 2, 3, 4, 5, 6))
+                .drawDate(LocalDate.now())
+                .build();
+        Set<Integer> winningNumbers = Set.of(7,8,9,10,11,12);
         //when
-        ResultCheckerResponseDto response = resultCheckerFacade.generateResult(inputNumbers, winningNumbers);
+        Set<Integer> resultNumbers = resultCheckerFacade.generateResult(ticket, winningNumbers).getNumbers();
         //then
-        ResultCheckerResponseDto expectedResponse = ResultCheckerResponseDto.TRY_AGAIN;
-        assertThat(response).isEqualTo(expectedResponse);
+        assertThat(resultNumbers).isEmpty();
     }
 
+    @Test
+    public void it_should_return_ticket_with_only_matching_numbers(){
+        //given
+        ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade();
+        String hash = UUID.randomUUID().toString();
+        TicketDto ticket = TicketDto.builder()
+                .hash(hash)
+                .numbers(Set.of(1, 2, 3, 4, 5, 6))
+                .drawDate(LocalDate.now())
+                .build();
+        Set<Integer> winningNumbers = Set.of(4,5,6,7,8,9);
+        //when
+        Set<Integer> resultNumbers = resultCheckerFacade.generateResult(ticket, winningNumbers).getNumbers();
+        //then
+        Set<Integer> expectedResult = Set.of(4, 5, 6);
+        assertThat(resultNumbers).isEqualTo(expectedResult);
+    }
+        //TODO:omówić z Bartkiem
+//    @Test
+//    public void it_should_add_ticket_to_winners_list_if_winning_ticket(){
+//        //given
+//        ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade();
+//        String hash = UUID.randomUUID().toString();
+//        TicketDto ticket = TicketDto.builder()
+//                .hash(hash)
+//                .numbers(Set.of(1, 2, 3, 4, 5, 6))
+//                .drawDate(LocalDate.now())
+//                .build();
+//        Set<Integer> winningNumbers = Set.of(1,2,3,4,5,6);
+//        //when
+//        ResultTicketDto winningTicket = resultCheckerFacade.generateResult(ticket, winningNumbers);
+//        //then
+//        WinnersDto winnersDto = WinnersDto.builder()
+//                .winners(new ArrayList<>())
+//                .build();
+//        List<ResultTicketDto> winners = winnersDto.getWinners();
+//        winners.add(winningTicket);
+//        assertThat(winners).isNotEmpty();
+//    }
+//
+//    @Test
+//    public void it_should_not_add_ticket_to_winners_list_if_there_is_no_winning_ticket(){
+//        //given
+//        ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade();
+//        String hash = UUID.randomUUID().toString();
+//        TicketDto ticket = TicketDto.builder()
+//                .hash(hash)
+//                .numbers(Set.of(1, 2, 3, 4, 5, 6))
+//                .drawDate(LocalDate.now())
+//                .build();
+//        Set<Integer> winningNumbers = Set.of(1,3,4,5,6,7);
+//        //when
+//        resultCheckerFacade.generateResult(ticket, winningNumbers);
+//        //then
+//        WinnersDto winnersDto = WinnersDto.builder()
+//                .winners(new ArrayList<>())
+//                .build();
+//        List<ResultTicketDto> winners = winnersDto.getWinners();
+//        assertThat(winners).isEmpty();
+//    }
 }

@@ -7,6 +7,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collections;
 import java.util.Set;
@@ -20,7 +21,8 @@ public class NumberReceiverFacade {
     private static final int QUANTITY_OF_NUMBERS_FROM_USER = 6;
     private static final int MAX_VALUE_NUMBER_FROM_USER = 99;
     private static final int MIN_VALUE_NUMBER_FROM_USER = 1;
-
+    private static final LocalTime DRAW_TIME = LocalTime.of(12, 0, 0);
+    private static final TemporalAdjuster NEXT_DRAW_DAY = TemporalAdjusters.next(DayOfWeek.SATURDAY);
 
 
     public NumberReceiverResponseDto inputNumbers(Set<Integer> numbersFromUser) {
@@ -28,7 +30,6 @@ public class NumberReceiverFacade {
         if (isNumberValid(numbersFromUser)) {
             String hash = UUID.randomUUID().toString();
             LocalDate drawDate = getNextDrawDate();
-            // TODO:  set interval of draws
             TicketDto generatedTicket = TicketDto.builder()
                     .hash(hash)
                     .numbers(numbersFromUser)
@@ -54,10 +55,9 @@ public class NumberReceiverFacade {
     private LocalDate getNextDrawDate() {
         LocalDate currentDate = LocalDate.now();
         LocalDateTime currentDayTime = LocalDateTime.now();
-        LocalDate drawDate = currentDate.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
-        LocalTime drawTime = LocalTime.of(12,0,0);
-        currentDayTime.isBefore(LocalDateTime.of(drawDate, drawTime));
+        LocalDate drawDate = currentDate.with(NEXT_DRAW_DAY);
+        currentDayTime.isBefore(LocalDateTime.of(drawDate, DRAW_TIME));
 
-        return currentDate.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+        return drawDate;
     }
 }
