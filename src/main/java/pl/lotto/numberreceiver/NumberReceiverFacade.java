@@ -3,7 +3,11 @@ package pl.lotto.numberreceiver;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 import pl.lotto.numberreceiver.dto.TicketDto;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -23,7 +27,7 @@ public class NumberReceiverFacade {
 
         if (isNumberValid(numbersFromUser)) {
             String hash = UUID.randomUUID().toString();
-            LocalDate drawDate = LocalDate.now();
+            LocalDate drawDate = getNextDrawDate();
             // TODO:  set interval of draws
             TicketDto generatedTicket = TicketDto.builder()
                     .hash(hash)
@@ -46,4 +50,14 @@ public class NumberReceiverFacade {
         Integer min = Collections.min(numbersFromUser);
 
         return min >= MIN_VALUE_NUMBER_FROM_USER && max <= MAX_VALUE_NUMBER_FROM_USER;    }
+
+    private LocalDate getNextDrawDate() {
+        LocalDate currentDate = LocalDate.now();
+        LocalDateTime currentDayTime = LocalDateTime.now();
+        LocalDate drawDate = currentDate.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+        LocalTime drawTime = LocalTime.of(12,0,0);
+        currentDayTime.isBefore(LocalDateTime.of(drawDate, drawTime));
+
+        return currentDate.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+    }
 }

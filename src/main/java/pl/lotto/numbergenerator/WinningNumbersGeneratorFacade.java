@@ -25,7 +25,6 @@ public class WinningNumbersGeneratorFacade {
         }
         return WinningNumbersDto.builder()
                 .winningNumbers(winningNumbers)
-                .drawDate(LocalDate.now())
                 .build();
     }
 
