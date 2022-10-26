@@ -39,21 +39,21 @@ class ResultAnnouncerFacadeTest {
 //
 //    }
 //
-    @Test
-    public void should_return_winning_message_if_won() {
-        //given
-        ResultAnnouncerFacade resultAnnouncerFacade = new ResultAnnouncerFacade();
-        String hash = UUID.randomUUID().toString();
-        TicketDto ticket = TicketDto.builder()
-                .hash(hash)
-                .drawDate(LocalDate.now())
-                .build();
-        Set<Integer> winningNumbers = Set.of(4,5,6,7,8,9);
-        //when
-        ResultAnnouncerMessageDto messageDto = resultAnnouncerFacade.checkResults(hash);
-        //then
-        assertThat(messageDto).isEqualTo(ResultAnnouncerMessageDto.CONGRATULATIONS_YOU_WON);
-
-    }
+//    @Test
+//    public void should_return_winning_message_if_won() {
+//        //given
+//        ResultAnnouncerFacade resultAnnouncerFacade = new ResultAnnouncerFacade();
+//        String hash = UUID.randomUUID().toString();
+//        TicketDto ticket = TicketDto.builder()
+//                .hash(hash)
+//                .drawDate(LocalDate.now())
+//                .build();
+//        Set<Integer> winningNumbers = Set.of(4,5,6,7,8,9);
+//        //when
+//        ResultAnnouncerMessageDto messageDto = resultAnnouncerFacade.checkResults(hash);
+//        //then
+//        assertThat(messageDto).isEqualTo(ResultAnnouncerMessageDto.CONGRATULATIONS_YOU_WON);
+//
+//    }
 
 }

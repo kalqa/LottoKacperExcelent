@@ -20,4 +20,7 @@ public class WinningNumbersGeneratorFacadeTest {
     }
 
     //TODO: Czy testuje się randomowe liczby jak tak to jak ?
+
+    // TODO: jeden unit test na sprawdzenie czy liczby faktycznei sa od siebie rozne - zabezpieczamy się jakby ktos zmienil z Set na List
+    // TODO: drugi unit test na sprawdzenie czy liczby są w zakresie od 1-99
 }
