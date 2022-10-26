@@ -2,14 +2,13 @@ package pl.lotto.numbergenerator;
 
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 public class WinningNumbersGeneratorFacade {
 
-    //TODO: Extract finals to config ??
+    //TODO:  finals to config ??
     private final int LOWER_BAND = 1;
     private final int UPPER_BAND = 99;
 

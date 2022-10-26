@@ -64,7 +64,7 @@ class ResultCheckerFacadeTest {
         Set<Integer> expectedResult = Set.of(4, 5, 6);
         assertThat(resultNumbers).isEqualTo(expectedResult);
     }
-        //TODO:omówić z Bartkiem
+        //TODO:omówić z Bartkiem dlaczego zawsze  test przechodzi, czy w ogole testowac zawartosc metody czy tylko to co zwraca, jak tak to czy nie zrobic osobnej metody dla dodawania wynikow
 //    @Test
 //    public void it_should_add_ticket_to_winners_list_if_winning_ticket(){
 //        //given

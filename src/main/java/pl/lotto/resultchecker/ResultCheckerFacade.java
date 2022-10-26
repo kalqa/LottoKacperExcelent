@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ResultCheckerFacade {
+
+    //TODO: Czy program sprawdza tylko zwyciezcow, czy tez ile sie trafilo liczb
     public ResultTicketDto generateResult(TicketDto ticketDto, Set<Integer> winningNumbers) {
         Set<Integer> matchingNumbers = new HashSet<>();
         setMatchingNumbers(ticketDto.getNumbers(), winningNumbers, matchingNumbers);
@@ -18,7 +20,7 @@ public class ResultCheckerFacade {
                 .numbers(matchingNumbers)
                 .drawDate(ticketDto.getDrawDate())
                 .build();
-
+        //TODO: do osobnej metody ?
         ArrayList<ResultTicketDto> winningTickets = new ArrayList<>();
         winningTickets.add(resultTicket);
         WinnersDto winners = WinnersDto.builder()

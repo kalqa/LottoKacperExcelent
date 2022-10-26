@@ -16,7 +16,7 @@ import java.util.UUID;
 public class NumberReceiverFacade {
 
 
-    //TODO: Extract finals to config ??
+    //TODO: finals to config ??
 
     private static final int QUANTITY_OF_NUMBERS_FROM_USER = 6;
     private static final int MAX_VALUE_NUMBER_FROM_USER = 99;
@@ -26,7 +26,7 @@ public class NumberReceiverFacade {
 
 
     public NumberReceiverResponseDto inputNumbers(Set<Integer> numbersFromUser) {
-
+        //TODO:Czy response powinien byc enumem czy lepiej jakas klasa co generuje bardziej tresciwe komunikaty
         if (isNumberValid(numbersFromUser)) {
             String hash = UUID.randomUUID().toString();
             LocalDate drawDate = getNextDrawDate();
@@ -41,6 +41,7 @@ public class NumberReceiverFacade {
         return NumberReceiverResponseDto.INPUT_ERROR;
     }
 
+    //TODO: te dwie metody do osobnej klasy ?
     private static boolean isNumberValid(Set<Integer> numbersFromUser) {
         return numbersFromUser.size() == QUANTITY_OF_NUMBERS_FROM_USER && isNumberInRange(numbersFromUser);
     }
@@ -51,7 +52,7 @@ public class NumberReceiverFacade {
         Integer min = Collections.min(numbersFromUser);
 
         return min >= MIN_VALUE_NUMBER_FROM_USER && max <= MAX_VALUE_NUMBER_FROM_USER;    }
-
+    //TODO: to tez do jakiegoś configa może ?
     private LocalDate getNextDrawDate() {
         LocalDate currentDate = LocalDate.now();
         LocalDateTime currentDayTime = LocalDateTime.now();
