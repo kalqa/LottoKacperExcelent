@@ -45,8 +45,11 @@ class NumberValidator {
 //        range.contains(numbersFromUser);
 
 
-        Integer max = Collections.max(numbersFromUser);
-        Integer min = Collections.min(numbersFromUser);
-        return min >= MIN_VALUE_NUMBER_FROM_USER && max <= MAX_VALUE_NUMBER_FROM_USER;
+        return numbersFromUser.stream()
+                .allMatch(number -> number >= MIN_VALUE_NUMBER_FROM_USER && number <= MAX_VALUE_NUMBER_FROM_USER);
+
+//        Integer max = Collections.max(numbersFromUser);
+//        Integer min = Collections.min(numbersFromUser);
+//        return min >= MIN_VALUE_NUMBER_FROM_USER && max <= MAX_VALUE_NUMBER_FROM_USER;
     }
 }
