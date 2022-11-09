@@ -1,64 +1,38 @@
 package pl.lotto.numberreceiver;
 
+import lombok.AllArgsConstructor;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 import pl.lotto.numberreceiver.dto.TicketDto;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
+import static pl.lotto.numberreceiver.ValidationResult.INPUT_SUCCESS;
+
+@AllArgsConstructor
 public class NumberReceiverFacade {
 
-
-    //TODO: finals to config ??
-
-    private static final int QUANTITY_OF_NUMBERS_FROM_USER = 6;
-    private static final int MAX_VALUE_NUMBER_FROM_USER = 99;
-    private static final int MIN_VALUE_NUMBER_FROM_USER = 1;
-    private static final LocalTime DRAW_TIME = LocalTime.of(12, 0, 0);
-    private static final TemporalAdjuster NEXT_DRAW_DAY = TemporalAdjusters.next(DayOfWeek.SATURDAY);
+    private final NumberValidator numberValidator;
+    private final DrawDateGenerator drawDateGenerator;
+    private final HashGenerator hashGenerator;
 
 
     public NumberReceiverResponseDto inputNumbers(Set<Integer> numbersFromUser) {
-        //TODO:Czy response powinien byc enumem czy lepiej jakas klasa co generuje bardziej tresciwe komunikaty
-        if (isNumberValid(numbersFromUser)) {
-            String hash = UUID.randomUUID().toString();
-            LocalDate drawDate = getNextDrawDate();
-            TicketDto generatedTicket = TicketDto.builder()
-                    .hash(hash)
-                    .numbers(numbersFromUser)
-                    .drawDate(drawDate)
-                    .build();
-            //TODO:save ticket to DB
-            return NumberReceiverResponseDto.INPUT_SUCCESS;
+        List<ValidationResult> validationResultList = numberValidator.validate(numbersFromUser);
+        if (!validationResultList.isEmpty()) {
+            String resultMessage = numberValidator.createResultMessage();
+            return new NumberReceiverResponseDto(null, resultMessage);
         }
-        return NumberReceiverResponseDto.INPUT_ERROR;
-    }
+        LocalDate drawDate = drawDateGenerator.getNextDrawDate();
 
-    //TODO: te dwie metody do osobnej klasy ?
-    private static boolean isNumberValid(Set<Integer> numbersFromUser) {
-        return numbersFromUser.size() == QUANTITY_OF_NUMBERS_FROM_USER && isNumberInRange(numbersFromUser);
-    }
-
-    private static boolean isNumberInRange(Set<Integer> numbersFromUser) {
-
-        Integer max = Collections.max(numbersFromUser);
-        Integer min = Collections.min(numbersFromUser);
-
-        return min >= MIN_VALUE_NUMBER_FROM_USER && max <= MAX_VALUE_NUMBER_FROM_USER;    }
-    //TODO: to tez do jakiegoś configa może ?
-    private LocalDate getNextDrawDate() {
-        LocalDate currentDate = LocalDate.now();
-        LocalDateTime currentDayTime = LocalDateTime.now();
-        LocalDate drawDate = currentDate.with(NEXT_DRAW_DAY);
-        currentDayTime.isBefore(LocalDateTime.of(drawDate, DRAW_TIME));
-
-        return drawDate;
+        TicketDto generatedTicket = TicketDto.builder()
+                .hash(hashGenerator.getHash())
+                .numbers(numbersFromUser)
+                .drawDate(drawDate)
+                .build();
+        //TODO:save ticket to DB
+        return new NumberReceiverResponseDto(generatedTicket, INPUT_SUCCESS.info);
     }
 }
+

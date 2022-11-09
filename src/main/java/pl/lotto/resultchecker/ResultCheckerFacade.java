@@ -22,6 +22,7 @@ public class ResultCheckerFacade {
                 .build();
         //TODO: do osobnej metody ?
         ArrayList<ResultTicketDto> winningTickets = new ArrayList<>();
+        //tutaj ifa ze sprawdzeniem czy moje liczby sa wygrane, jak tak to dodac do winners
         winningTickets.add(resultTicket);
         WinnersDto winners = WinnersDto.builder()
                 .winners(winningTickets)
