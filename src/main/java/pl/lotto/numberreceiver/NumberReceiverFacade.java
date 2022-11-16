@@ -15,7 +15,7 @@ public class NumberReceiverFacade {
 
     private final NumberValidator numberValidator;
     private final DrawDateGenerator drawDateGenerator;
-    private final HashGenerator hashGenerator;
+    HashGenerable hashGenerator;
 
 
     public NumberReceiverResponseDto inputNumbers(Set<Integer> numbersFromUser) {

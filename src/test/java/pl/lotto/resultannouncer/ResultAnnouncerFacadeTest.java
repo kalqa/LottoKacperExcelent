@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ResultAnnouncerFacadeTest {
 
 //    @Test
-//    public void should_return_no_winning_message_if_there_is_no_hits() {
+//    public void it_should_return_no_winning_message_if_there_is_no_hits() {
 //        //given
 //        ResultAnnouncerFacade resultAnnouncerFacade = new ResultAnnouncerFacade();
 //        String hash = UUID.randomUUID().toString();
@@ -30,17 +30,17 @@ class ResultAnnouncerFacadeTest {
 //    }
 
 //    @Test
-//    public void should_return_no_ticket_message_if_there_is_no_ticket_with_such_hash() {
+//    public void it_should_return_no_ticket_message_if_there_is_no_ticket_with_such_hash() {
 //
 //    }
 //
 //    @Test
-//    public void should_return_no_results_yet_message_if_before_draw_due_date() {
+//    public void it_should_return_no_results_yet_message_if_before_draw_due_date() {
 //
 //    }
 //
 //    @Test
-//    public void should_return_winning_message_if_won() {
+//    public void it_should_return_winning_message_if_won() {
 //        //given
 //        ResultAnnouncerFacade resultAnnouncerFacade = new ResultAnnouncerFacade();
 //        String hash = UUID.randomUUID().toString();

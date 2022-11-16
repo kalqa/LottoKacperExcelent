@@ -1,33 +1,19 @@
 package pl.lotto.numbergenerator;
 
+import lombok.AllArgsConstructor;
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
 
-import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
+@AllArgsConstructor
 public class WinningNumbersGeneratorFacade {
 
-    //TODO:  finals to config ??
-    private final int LOWER_BAND = 1;
-    private final int UPPER_BAND = 99;
-
-    private final int RANDOM_NUMBER_BOUND = (UPPER_BAND-LOWER_BAND) +1;
-
+    RandomNumberGenerable winningNumberGenerator;
 
     public WinningNumbersDto generateWinningNumbers() {
-        Set<Integer> winningNumbers = new HashSet<>();
-        while(isAmountOfNumbersLowerThanSix(winningNumbers)) {
-            Random random = new Random();
-            int randomNumber = random.nextInt(RANDOM_NUMBER_BOUND);
-            winningNumbers.add(randomNumber);
-        }
+        Set<Integer> winningNumbers = winningNumberGenerator.generateRandomWInningNumbers();
         return WinningNumbersDto.builder()
                 .winningNumbers(winningNumbers)
                 .build();
-    }
-
-    private static boolean isAmountOfNumbersLowerThanSix(Set<Integer> winningNumbers) {
-        return winningNumbers.size() < 6;
     }
 }

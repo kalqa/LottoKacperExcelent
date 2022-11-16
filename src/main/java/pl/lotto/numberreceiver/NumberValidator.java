@@ -1,11 +1,9 @@
 package pl.lotto.numberreceiver;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 class NumberValidator {
 
@@ -38,15 +36,7 @@ class NumberValidator {
     }
 
     boolean isNumberInRange(Set<Integer> numbersFromUser) {
-
-
-        //todo: czy to jest okej?
-//        Set<Integer> range = IntStream.rangeClosed(MIN_VALUE_NUMBER_FROM_USER, MAX_VALUE_NUMBER_FROM_USER).boxed().collect(Collectors.toSet());
-//        range.contains(numbersFromUser);
-
-
-        Integer max = Collections.max(numbersFromUser);
-        Integer min = Collections.min(numbersFromUser);
-        return min >= MIN_VALUE_NUMBER_FROM_USER && max <= MAX_VALUE_NUMBER_FROM_USER;
+        return numbersFromUser.stream()
+                .allMatch(number -> number >= MIN_VALUE_NUMBER_FROM_USER && number <= MAX_VALUE_NUMBER_FROM_USER);
     }
 }

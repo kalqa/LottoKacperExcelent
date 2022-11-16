@@ -6,29 +6,19 @@ import pl.lotto.numberreceiver.dto.TicketDto;
 
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class NumberReceiverFacadeTest {
 
-    private final NumberValidator numberValidator;
-    private final DrawDateGenerator drawDateGenerator;
-    private final HashGenerator hashGenerator;
-
-
-    public NumberReceiverFacadeTest(NumberValidator numberValidator, DrawDateGenerator drawDateGenerator, HashGenerator hashGenerator) {
-        this.numberValidator = numberValidator;
-        this.drawDateGenerator = drawDateGenerator;
-        this.hashGenerator = hashGenerator;
-    }
-
-
 
     @Test
-    public void should_return_correct_message_when_user_input_six_numbers_in_range() {
+    public void it_should_return_correct_response_when_user_input_six_numbers_in_range() {
         // given
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator,drawDateGenerator,hashGenerator);
+        NumberValidator numberValidator = new NumberValidator();
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator();
+        HashGenerable hashGenerator = new HashGeneratorTestImpl();
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
         LocalDate nextDrawDate = drawDateGenerator.getNextDrawDate();
 
@@ -39,66 +29,116 @@ public class NumberReceiverFacadeTest {
                 .build();
 
         // when
-        String response = numberReceiverFacade.inputNumbers(numbersFromUser).message();
+        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
 
         // then
-        String expectedResponse = new NumberReceiverResponseDto(generatedTicket,ValidationResult.INPUT_SUCCESS.info).message();
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(generatedTicket, ValidationResult.INPUT_SUCCESS.info);
+        assertThat(response).isEqualTo(expectedResponse);
+        //TODO: dopytać czy tak jest okej hash generator
+    }
+
+    @Test
+    public void it_should_return_failed_message_when_user_input_six_numbers_but_one_number_is_out_of_range() {
+        // given
+        NumberValidator numberValidator = new NumberValidator();
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator();
+        HashGenerator hashGenerator = new HashGenerator();
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 100);
+
+        // when
+        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
+
+        // then
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(null, ValidationResult.NOT_IN_RANGE.info);
         assertThat(response).isEqualTo(expectedResponse);
     }
 
+    @Test
+    public void it_should_return_failed_message_when_user_input_six_numbers_but_one_number_is_out_of_range_and_is_negative() {
+        // given
+        NumberValidator numberValidator = new NumberValidator();
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator();
+        HashGenerator hashGenerator = new HashGenerator();
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        Set<Integer> numbersFromUser = Set.of(1, 2, 3, -4, 5, 6);
+
+        // when
+        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
+
+        // then
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(null, ValidationResult.NOT_IN_RANGE.info);
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    public void it_should_return_failed_message_when_user_input_less_than_six_numbers() {
+        // given
+        NumberValidator numberValidator = new NumberValidator();
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator();
+        HashGenerator hashGenerator = new HashGenerator();
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5);
+
+        // when
+        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
+
+        // then
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(null, ValidationResult.NOT_SIX_NUMBERS_GIVEN.info);
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    public void it_should_return_failed_message_when_user_input_more_than_six_numbers() {
+        // given
+        NumberValidator numberValidator = new NumberValidator();
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator();
+        HashGenerator hashGenerator = new HashGenerator();
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6, 7);
+
+        // when
+        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
+
+        // then
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(null, ValidationResult.NOT_SIX_NUMBERS_GIVEN.info);
+        assertThat(response).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    public void it_should_return_correct_hash() {
+        // given
+        NumberValidator numberValidator = new NumberValidator();
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator();
+        HashGenerable hashGenerator = new HashGenerator();
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
+        LocalDate nextDrawDate = drawDateGenerator.getNextDrawDate();
+
+        // when
+        String response = numberReceiverFacade.inputNumbers(numbersFromUser).ticketDto().getHash();
+
+        // then
+        assertThat(response).hasSize(36);
+        //TODO: dopytać czy tak jest okej hash generator
+    }
+
 //    @Test
-//    public void should_return_failed_message_when_user_input_six_numbers_but_one_number_is_out_of_range() {
+//    public void it_should_return_correct_draw_date() {
 //        // given
-//        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator,drawDateGenerator);
-//        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 100);
+//        NumberValidator numberValidator = new NumberValidator();
+//        DrawDateGenerator drawDateGenerator = new DrawDateGenerator();
+//        HashGenerable hashGenerator = new HashGenerator();
+//        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+//        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
 //
 //        // when
-//        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
+//        LocalDate testedDrawDate = numberReceiverFacade.inputNumbers(numbersFromUser).ticketDto().getDrawDate();
 //
 //        // then
-//        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.INPUT_ERROR;
-//        assertThat(response).isEqualTo(expectedResponse);
-//    }
-//
-//    @Test
-//    public void should_return_failed_message_when_user_input_six_numbers_but_one_number_is_out_of_range_and_is_negative() {
-//        // given
-//        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator,drawDateGenerator);
-//        Set<Integer> numbersFromUser = Set.of(1, 2, 3, -4, 5, 6);
-//
-//        // when
-//        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
-//
-//        // then
-//        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.INPUT_ERROR;
-//        assertThat(response).isEqualTo(expectedResponse);
-//    }
-//
-//    @Test
-//    public void should_return_failed_message_when_user_input_less_than_six_numbers() {
-//        // given
-//        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator,drawDateGenerator);
-//        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5);
-//
-//        // when
-//        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
-//
-//        // then
-//        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.INPUT_ERROR;
-//        assertThat(response).isEqualTo(expectedResponse);
-//    }
-//
-//    @Test
-//    public void should_return_failed_message_when_user_input_more_than_six_numbers() {
-//        // given
-//        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator,drawDateGenerator);
-//        Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6, 7);
-//
-//        // when
-//        NumberReceiverResponseDto response = numberReceiverFacade.inputNumbers(numbersFromUser);
-//
-//        // then
-//        NumberReceiverResponseDto expectedResponse = NumberReceiverResponseDto.INPUT_ERROR;
-//        assertThat(response).isEqualTo(expectedResponse);
+//        Clock clock = Clock;
+//        LocalDate expectedDrawDate = LocalDate.now(clock);
+//        assertThat(testedDrawDate).isEqualTo(expectedDrawDate);
+//        //TODO: nie wiem jak się do tego dobrać, jak ustawić datę i czas wygenerowania biletu
 //    }
 }

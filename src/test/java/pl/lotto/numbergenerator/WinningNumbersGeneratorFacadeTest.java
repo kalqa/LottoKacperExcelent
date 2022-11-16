@@ -3,17 +3,19 @@ package pl.lotto.numbergenerator;
 import org.junit.jupiter.api.Test;
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
 
-import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WinningNumbersGeneratorFacadeTest {
 
     @Test
     public void it_should_return_set_of_required_size() {
         //given
-        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade();
+        RandomNumberGenerable generator = new WinningNumberGenerator();
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -23,23 +25,38 @@ public class WinningNumbersGeneratorFacadeTest {
     @Test
     public void it_should_return_set_of_required_size_within_required_range() {
         //given
-        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade();
-        int upperBand = 99;
-        int lowerBand = 1;
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
-        Integer minValue = generatedNumbers.getWinningNumbers().stream().min(Comparator.comparing(Integer::valueOf)).get();
-        Integer maxValue = generatedNumbers.getWinningNumbers().stream().max(Comparator.comparing(Integer::valueOf)).get();
+        int upperBand = 99;
+        int lowerBand = 1;
+        Set<Integer> winningNumbers = generatedNumbers.getWinningNumbers();
+        boolean numbersInRange = winningNumbers.stream().allMatch(number -> number >= lowerBand && number <= upperBand);
+        assertThat(numbersInRange).isTrue();
 
-        assertThat(minValue).isGreaterThanOrEqualTo(lowerBand);
-        assertThat(maxValue).isLessThanOrEqualTo(upperBand);
+    }
+
+    @Test
+    public void it_should_throw_an_exception_when_number_not_in_range() {
+        //given
+        Set<Integer> numbersOutOfRange = Set.of(1, 2, 3, 4, 5, 100);
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl(numbersOutOfRange);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
+        //when
+        //then
+        assertThrows(IllegalStateException.class, () -> numbersGenerator.generateWinningNumbers(), "Number out of range!");
+//        TODO: Nie czaje czemu nie rzuca wyjatku
+
+
     }
 
     @Test
     public void it_should_return_collection_of_unique_values() {
         //given
-        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade();
+        RandomNumberGenerable generator = new WinningNumberGenerator();
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
