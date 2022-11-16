@@ -1,6 +1,8 @@
 package pl.lotto.resultchecker;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
+import pl.lotto.numberreceiver.NumberReceiverFacade;
 import pl.lotto.numberreceiver.dto.TicketDto;
 import pl.lotto.resultchecker.dto.ResultTicketDto;
 import pl.lotto.resultchecker.dto.WinnersDto;
@@ -19,6 +21,7 @@ class ResultCheckerFacadeTest {
     @Test
     public void it_should_return_ticket_with_all_matching_numbers_if_ticket_is_a_winning_ticket(){
         //given
+        NumberReceiverFacade numberReceiverFacade = Mockito.mock(NumberReceiverFacade.class);
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade();
         String hash = UUID.randomUUID().toString();
         TicketDto ticket = TicketDto.builder()

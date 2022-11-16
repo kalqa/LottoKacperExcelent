@@ -1,17 +1,18 @@
 package pl.lotto.numbergenerator;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
-
-import java.util.Set;
 
 @AllArgsConstructor
 public class WinningNumbersGeneratorFacade {
 
-    RandomNumberGenerable winningNumberGenerator;
+    RandomNumberGenerable generator;
+    WinningNumberValidator validator;
 
     public WinningNumbersDto generateWinningNumbers() {
-        Set<Integer> winningNumbers = winningNumberGenerator.generateRandomWInningNumbers();
+        Set<Integer> winningNumbers = generator.generateSixRandomNumbers();
+        validator.validate(winningNumbers);
         return WinningNumbersDto.builder()
                 .winningNumbers(winningNumbers)
                 .build();

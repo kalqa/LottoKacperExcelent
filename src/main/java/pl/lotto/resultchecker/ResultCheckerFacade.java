@@ -1,17 +1,29 @@
 package pl.lotto.resultchecker;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
+import pl.lotto.numberreceiver.NumberReceiverFacade;
 import pl.lotto.numberreceiver.dto.TicketDto;
 import pl.lotto.resultchecker.dto.ResultTicketDto;
 import pl.lotto.resultchecker.dto.WinnersDto;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 public class ResultCheckerFacade {
+
+    NumberReceiverFacade receiver;
+    WinningNumbersGeneratorFacade generator;
+
+    ResultCheckerFacade(NumberReceiverFacade receiver, WinningNumbersGeneratorFacade generator) {
+        this.receiver = receiver;
+        this.generator = generator;
+    }
 
     //TODO: Czy program sprawdza tylko zwyciezcow, czy tez ile sie trafilo liczb
     public ResultTicketDto generateResult(TicketDto ticketDto, Set<Integer> winningNumbers) {
+        receiver.userNumbers(LocalDateTime.now());
+
         Set<Integer> matchingNumbers = new HashSet<>();
         setMatchingNumbers(ticketDto.getNumbers(), winningNumbers, matchingNumbers);
 
@@ -33,7 +45,7 @@ public class ResultCheckerFacade {
 
     private static void setMatchingNumbers(Set<Integer> inputNumbers, Set<Integer> winningNumbers, Set<Integer> matchingNumbers) {
         for (Integer number : winningNumbers) {
-            if(inputNumbers.contains(number)) {
+            if (inputNumbers.contains(number)) {
                 matchingNumbers.add(number);
             }
         }
