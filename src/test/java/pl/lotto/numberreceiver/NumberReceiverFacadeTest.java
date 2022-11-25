@@ -126,7 +126,7 @@ public class NumberReceiverFacadeTest {
     @Test
     public void it_should_return_correct_draw_date() {
         // given
-        Clock clock = Clock.fixed(LocalDateTime.of(2022,11,19,10,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/Warsaw"));
+        Clock clock = Clock.fixed(LocalDateTime.of(2022,11,19,11,50,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerable hashGenerator = new HashGenerator();
@@ -137,8 +137,7 @@ public class NumberReceiverFacadeTest {
         LocalDate testedDrawDate = numberReceiverFacade.inputNumbers(numbersFromUser).ticketDto().getDrawDate();
 
         // then
-
-        LocalDate expectedDrawDate =LocalDate.of(2022,11,19);
+        LocalDate expectedDrawDate = LocalDate.of(2022,11,19);
 
         assertThat(testedDrawDate).isEqualTo(expectedDrawDate);
         //TODO: clock dodaje godzine do przodu widać w debugerze dlaczego ? niżej też
@@ -159,7 +158,7 @@ public class NumberReceiverFacadeTest {
 
         // then
 
-        LocalDate expectedDrawDate =LocalDate.of(2022,11,26);
+        LocalDate expectedDrawDate = LocalDate.of(2022,11,26);
 
         assertThat(testedDrawDate).isEqualTo(expectedDrawDate);
     }

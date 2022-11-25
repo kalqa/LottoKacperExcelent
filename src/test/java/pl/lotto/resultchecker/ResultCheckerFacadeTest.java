@@ -1,19 +1,41 @@
-//package pl.lotto.resultchecker;
-//
-//import org.junit.jupiter.api.Test;
-//import pl.lotto.numberreceiver.dto.TicketDto;
-//import pl.lotto.resultchecker.dto.ResultTicketDto;
-//import pl.lotto.resultchecker.dto.WinnersDto;
-//
-//import java.time.LocalDateTime;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Set;
-//import java.util.UUID;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//
-//class ResultCheckerFacadeTest {
+package pl.lotto.resultchecker;
+
+import java.util.List;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
+import pl.lotto.numbergenerator.dto.WinningNumbersDto;
+import pl.lotto.numberreceiver.NumberReceiverFacade;
+import pl.lotto.numberreceiver.dto.TicketDto;
+import pl.lotto.resultchecker.dto.WinnerDto;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class ResultCheckerFacadeTest {
+
+
+    @Test
+    public void it_should_return_ticket_with_all_matching_numbers_if_ticket_is_a_winning_ticket() {
+        //given
+        WinningNumbersGeneratorFacade generatorFacade = mock(WinningNumbersGeneratorFacade.class);
+        NumberReceiverFacade receiverFacade = mock(NumberReceiverFacade.class);
+        when(generatorFacade.generateWinningNumbers()).thenReturn(WinningNumbersDto.builder()
+                .winningNumbers(Set.of(1, 2, 3, 4, 5, 6))
+                .build());
+        when(receiverFacade.getAllTicketsByDate(any())).thenReturn(
+                List.of(TicketDto.builder()
+                        .hash("123")
+                        .numbers(Set.of(1, 2, 3, 4, 5, 6))
+                        .build())
+        );
+        ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade(generatorFacade, receiverFacade);
+        //when
+        List<WinnerDto> winnerDtos = resultCheckerFacade.generateWinners();
+        //then
+    }
+
+
 //
 //
 //    @Test
@@ -113,4 +135,4 @@
 //        List<ResultTicketDto> winners = winnersDto.getWinners();
 //        assertThat(winners).isEmpty();
 //    }
-//}
+}

@@ -26,7 +26,7 @@ class DrawDateGenerator {
         return drawDate;
     }
 
-    private static boolean isSaturdayAndBeforeNoon(LocalTime currentTime, LocalDateTime currentDateTime) {
+    private boolean isSaturdayAndBeforeNoon(LocalTime currentTime, LocalDateTime currentDateTime) {
         return currentDateTime.getDayOfWeek().equals(DayOfWeek.SATURDAY) && currentTime.isBefore(DRAW_TIME);
     }
 
