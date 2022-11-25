@@ -12,7 +12,7 @@ enum ValidationResult {
     }
 
     //TODO: Gdzie tego użyć
-    boolean isError(){
+    boolean isError() {
         return this.equals(NOT_SIX_NUMBERS_GIVEN) || this.equals(NOT_IN_RANGE);
     }
 }

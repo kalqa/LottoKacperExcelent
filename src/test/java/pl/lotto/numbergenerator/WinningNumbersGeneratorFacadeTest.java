@@ -14,8 +14,8 @@ public class WinningNumbersGeneratorFacadeTest {
     @Test
     public void it_should_return_set_of_required_size() {
         //given
-        RandomNumberGenerable generator = new WinningNumberGenerator();
-        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
+        RandomNumberGenerable generator = new RandomGenerator();
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -25,8 +25,8 @@ public class WinningNumbersGeneratorFacadeTest {
     @Test
     public void it_should_return_set_of_required_size_within_required_range() {
         //given
-        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
-        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
+        RandomNumberGenerable generator = new RandomGenerator();
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -43,7 +43,7 @@ public class WinningNumbersGeneratorFacadeTest {
         //given
         Set<Integer> numbersOutOfRange = Set.of(1, 2, 3, 4, 5, 100);
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl(numbersOutOfRange);
-        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
         //when
         //then
         assertThrows(IllegalStateException.class, () -> numbersGenerator.generateWinningNumbers(), "Number out of range!");
@@ -55,8 +55,8 @@ public class WinningNumbersGeneratorFacadeTest {
     @Test
     public void it_should_return_collection_of_unique_values() {
         //given
-        RandomNumberGenerable generator = new WinningNumberGenerator();
-        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersGeneratorFacade(generator);
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then

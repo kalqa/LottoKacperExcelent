@@ -19,7 +19,7 @@ public class WinningNumberGeneratorTestImpl implements RandomNumberGenerable {
     }
 
     @Override
-    public Set<Integer> generateRandomWInningNumbers() {
+    public Set<Integer> generateSixRandomNumbers() {
         return generatedNumbers;
     }
 }

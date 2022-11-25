@@ -8,5 +8,5 @@ import java.util.List;
 @Builder
 @Data
 public class WinnersDto {
-    private List<ResultTicketDto> winners;
+    private List<WinnerDto> winners;
 }

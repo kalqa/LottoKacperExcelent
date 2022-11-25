@@ -1,4 +1,4 @@
-package pl.lotto.resultchecker.dto;
+package pl.lotto.numberreceiver;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,9 +6,9 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Builder
 @Data
-public class ResultTicketDto {
+@Builder
+class Ticket {
 
     private String hash;
     private Set<Integer> numbers;

@@ -1,41 +1,55 @@
 package pl.lotto.resultchecker;
 
+import lombok.AllArgsConstructor;
+import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
+import pl.lotto.numberreceiver.NumberReceiverFacade;
 import pl.lotto.numberreceiver.dto.TicketDto;
-import pl.lotto.resultchecker.dto.ResultTicketDto;
-import pl.lotto.resultchecker.dto.WinnersDto;
+import pl.lotto.resultchecker.dto.WinnerDto;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class ResultCheckerFacade {
 
-    //TODO: Czy program sprawdza tylko zwyciezcow, czy tez ile sie trafilo liczb
-    public ResultTicketDto generateResult(TicketDto ticketDto, Set<Integer> winningNumbers) {
-        Set<Integer> matchingNumbers = new HashSet<>();
-        setMatchingNumbers(ticketDto.getNumbers(), winningNumbers, matchingNumbers);
+    WinningNumbersGeneratorFacade generator;
+    NumberReceiverFacade receiver;
 
-        ResultTicketDto resultTicket = ResultTicketDto.builder()
-                .hash(ticketDto.getHash())
+    public WinnerDto generateResult(String hash) {
+        Set<Integer> winningNumbers = generator.generateWinningNumbers().getWinningNumbers();
+        Set<Integer> usersNumbers = receiver.getTicketByHash(hash).getNumbers();
+        Set<Integer> matchingNumbers = retrieveMatchingNumbers(winningNumbers, usersNumbers);
+        return WinnerDto.builder()
+                .hash(hash)
                 .numbers(matchingNumbers)
-                .drawDate(ticketDto.getDrawDate())
+                .drawDate(receiver.getTicketByHash(hash).getDrawDate())
                 .build();
-        //TODO: do osobnej metody ?
-        ArrayList<ResultTicketDto> winningTickets = new ArrayList<>();
-        //tutaj ifa ze sprawdzeniem czy moje liczby sa wygrane, jak tak to dodac do winners
-        winningTickets.add(resultTicket);
-        WinnersDto winners = WinnersDto.builder()
-                .winners(winningTickets)
-                .build();
-
-        return resultTicket;
     }
 
-    private static void setMatchingNumbers(Set<Integer> inputNumbers, Set<Integer> winningNumbers, Set<Integer> matchingNumbers) {
-        for (Integer number : winningNumbers) {
-            if(inputNumbers.contains(number)) {
-                matchingNumbers.add(number);
-            }
-        }
+    private static Set<Integer> retrieveMatchingNumbers(Set<Integer> winningNumbers, Set<Integer> usersNumbers) {
+        return usersNumbers.stream()
+                .filter(winningNumbers::contains)
+                .collect(Collectors.toSet());
+    }
+
+    public List<WinnerDto> generateWinners() {
+        List<TicketDto> allTicketsByDate = receiver.getAllTicketsByDate(LocalDate.now());
+        Set<Integer> winningNumbers = generator.generateWinningNumbers().getWinningNumbers();
+        return createWinners(allTicketsByDate, winningNumbers);
+    }
+
+    private List<WinnerDto> createWinners(List<TicketDto> allTicketsByDate, Set<Integer> winningNumbers) {
+        return allTicketsByDate.stream()
+                .filter(ticketDto -> ticketDto.getNumbers().containsAll(winningNumbers))
+                .map(ticketDto -> WinnerDto.builder()
+                        .hash(ticketDto.getHash())
+                        .numbers(ticketDto.getNumbers())
+                        .drawDate(ticketDto.getDrawDate())
+                        .build())
+                .toList();
     }
 }

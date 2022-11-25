@@ -1,10 +1,6 @@
 package pl.lotto.resultannouncer;
 
-import pl.lotto.resultannouncer.dto.ResultAnnouncerMessageDto;
-import pl.lotto.resultchecker.dto.WinnersDto;
-
 public class ResultAnnouncerFacade {
-
 
 
 //    public ResultAnnouncerMessageDto checkResults(String hash) {
