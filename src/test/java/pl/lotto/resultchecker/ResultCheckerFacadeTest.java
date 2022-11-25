@@ -3,6 +3,7 @@ package pl.lotto.resultchecker;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
 import pl.lotto.numberreceiver.NumberReceiverFacade;
@@ -23,7 +24,7 @@ class ResultCheckerFacadeTest {
         when(generatorFacade.generateWinningNumbers()).thenReturn(WinningNumbersDto.builder()
                 .winningNumbers(Set.of(1, 2, 3, 4, 5, 6))
                 .build());
-        when(receiverFacade.getAllTicketsByDate(any())).thenReturn(
+        when(receiverFacade.getAllTicketsByDate()).thenReturn(
                 List.of(TicketDto.builder()
                         .hash("123")
                         .numbers(Set.of(1, 2, 3, 4, 5, 6))

@@ -15,12 +15,13 @@ public class NumberReceiverFacade {
 
     private final NumberValidator numberValidator;
     private final DrawDateGenerator drawDateGenerator;
-    private final HashMap<String, Ticket> userNumbers = new HashMap<>();
+    private final NumberReceiverRepository repository;
     HashGenerable hashGenerator;
 
-    public NumberReceiverFacade(NumberValidator numberValidator, DrawDateGenerator drawDateGenerator, HashGenerable hashGenerator) {
+    NumberReceiverFacade(NumberValidator numberValidator, DrawDateGenerator drawDateGenerator, NumberReceiverRepository repository, HashGenerable hashGenerator) {
         this.numberValidator = numberValidator;
         this.drawDateGenerator = drawDateGenerator;
+        this.repository = repository;
         this.hashGenerator = hashGenerator;
     }
 
@@ -46,16 +47,17 @@ public class NumberReceiverFacade {
                 .drawDate(generatedTicket.getDrawDate())
                 .build();
 
-        userNumbers.put(hash, savedTicket);
+        repository.save(savedTicket);
+//        userNumbers.put(hash, savedTicket);
 
         return new NumberReceiverResponseDto(generatedTicket, INPUT_SUCCESS.info);
     }
 
     public TicketDto getTicketByHash(String hash) {
-        if (!userNumbers.containsKey(hash)) {
+        if (!repository.exists(hash)) {
             return null;
         }
-        Ticket ticket = userNumbers.get(hash);
+        Ticket ticket = repository.get(hash);
         return TicketDto.builder()
                 .hash(ticket.getHash())
                 .numbers(ticket.getNumbers())
@@ -69,9 +71,7 @@ public class NumberReceiverFacade {
         if(date.isBefore(nextDrawDate) || date.isAfter(nextDrawDate)) {
             return Collections.emptyList();
         }
-        return userNumbers.values()
-                .stream()
-                .filter(ticket -> ticket.getDrawDate().isEqual(date))
+        return repository.findAllByDrawDate(date)
                 .map(ticket -> TicketDto.builder()
                         .hash(ticket.getHash())
                         .numbers(ticket.getNumbers())

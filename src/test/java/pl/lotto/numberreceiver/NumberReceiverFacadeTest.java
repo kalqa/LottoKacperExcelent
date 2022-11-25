@@ -1,5 +1,7 @@
 package pl.lotto.numberreceiver;
 
+import java.util.HashMap;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 import pl.lotto.numberreceiver.dto.TicketDto;
@@ -13,6 +15,8 @@ public class NumberReceiverFacadeTest {
 
     Clock clock = Clock.systemUTC();
 
+    private final NumberReceiverRepository repository = new NumberReceiverRepositoryTestImpl();
+
 
     @Test
     public void it_should_return_correct_response_when_user_input_six_numbers_in_range() {
@@ -20,7 +24,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
         LocalDate nextDrawDate = drawDateGenerator.getNextDrawDate();
 
@@ -44,7 +48,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerator hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 100);
 
         // when
@@ -61,7 +65,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerator hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, -4, 5, 6);
 
         // when
@@ -78,7 +82,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerator hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5);
 
         // when
@@ -95,7 +99,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerator hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6, 7);
 
         // when
@@ -112,7 +116,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
 
         // when
@@ -130,7 +134,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
 
         // when
@@ -150,7 +154,7 @@ public class NumberReceiverFacadeTest {
         NumberValidator numberValidator = new NumberValidator();
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
 
         // when
@@ -161,5 +165,28 @@ public class NumberReceiverFacadeTest {
         LocalDate expectedDrawDate = LocalDate.of(2022,11,26);
 
         assertThat(testedDrawDate).isEqualTo(expectedDrawDate);
+    }
+
+    @Test
+    public void it_should_return_correct_draw_date_when_date_is_Saturday_afternoon() {
+        // given
+        Clock clock = Clock.fixed(LocalDateTime.of(2022,11,19,12,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/Warsaw"));
+        NumberValidator numberValidator = new NumberValidator();
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
+        HashGenerable hashGenerator = new HashGenerator();
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, repository, hashGenerator);
+        NumberReceiverResponseDto numberReceiverResponseDto =
+                numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
+        NumberReceiverResponseDto numberReceiverResponseDto2 =
+                numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
+        NumberReceiverResponseDto numberReceiverResponseDto3 =
+                numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
+
+        LocalDate drawDate = numberReceiverResponseDto.ticketDto().getDrawDate();
+
+        // when
+        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByDate(drawDate);
+
+        // then
     }
 }
