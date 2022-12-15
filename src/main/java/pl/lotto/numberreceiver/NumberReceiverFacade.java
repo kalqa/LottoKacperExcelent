@@ -1,28 +1,24 @@
 package pl.lotto.numberreceiver;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 import pl.lotto.numberreceiver.dto.TicketDto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static pl.lotto.numberreceiver.ValidationResult.INPUT_SUCCESS;
-
-
+@AllArgsConstructor
 public class NumberReceiverFacade {
 
     private final NumberValidator numberValidator;
     private final DrawDateGenerator drawDateGenerator;
-    private final HashMap<String, Ticket> userNumbers = new HashMap<>();
-    HashGenerable hashGenerator;
+    private final HashGenerable hashGenerator;
+    private final TicketRepository ticketRepository;
 
-    public NumberReceiverFacade(NumberValidator numberValidator, DrawDateGenerator drawDateGenerator, HashGenerable hashGenerator) {
-        this.numberValidator = numberValidator;
-        this.drawDateGenerator = drawDateGenerator;
-        this.hashGenerator = hashGenerator;
-    }
+
 
     public NumberReceiverResponseDto inputNumbers(Set<Integer> numbersFromUser) {
         List<ValidationResult> validationResultList = numberValidator.validate(numbersFromUser);
@@ -30,7 +26,7 @@ public class NumberReceiverFacade {
             String resultMessage = numberValidator.createResultMessage();
             return new NumberReceiverResponseDto(null, resultMessage);
         }
-        LocalDate drawDate = drawDateGenerator.getNextDrawDate();
+        LocalDateTime drawDate = drawDateGenerator.getNextDrawDate();
 
         String hash = hashGenerator.getHash();
 
@@ -46,30 +42,18 @@ public class NumberReceiverFacade {
                 .drawDate(generatedTicket.getDrawDate())
                 .build();
 
-        userNumbers.put(hash, savedTicket);
+        ticketRepository.save(savedTicket);
 
         return new NumberReceiverResponseDto(generatedTicket, INPUT_SUCCESS.info);
     }
 
-    public TicketDto getTicketByHash(String hash) {
-        if (!userNumbers.containsKey(hash)) {
-            return null;
-        }
-        Ticket ticket = userNumbers.get(hash);
-        return TicketDto.builder()
-                .hash(ticket.getHash())
-                .numbers(ticket.getNumbers())
-                .drawDate(ticket.getDrawDate())
-                .build();
 
-    }
-
-    public List<TicketDto> getAllTicketsByDate(LocalDate date) {
-        LocalDate nextDrawDate = drawDateGenerator.getNextDrawDate();
-        if(date.isBefore(nextDrawDate) || date.isAfter(nextDrawDate)) {
+    public List<TicketDto> getAllTicketsByDate(LocalDateTime date) {
+        LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
+        if (date.isAfter(nextDrawDate)) {
             return Collections.emptyList();
         }
-        return userNumbers.values()
+        return ticketRepository.findAllTicketsByDrawDate(date)
                 .stream()
                 .filter(ticket -> ticket.getDrawDate().isEqual(date))
                 .map(ticket -> TicketDto.builder()
@@ -78,6 +62,19 @@ public class NumberReceiverFacade {
                         .drawDate(ticket.getDrawDate())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public LocalDateTime nextDrawDate() {
+        return drawDateGenerator.getNextDrawDate();
+    }
+
+    public TicketDto findByHash(String hash) {
+        Ticket ticket = ticketRepository.findByHash(hash);
+        return TicketDto.builder()
+                .hash(ticket.getHash())
+                .numbers(ticket.getNumbers())
+                .drawDate(ticket.getDrawDate())
+                .build();
     }
 }
 

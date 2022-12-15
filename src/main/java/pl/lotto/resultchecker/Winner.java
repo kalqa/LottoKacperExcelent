@@ -1,15 +1,13 @@
-package pl.lotto.numberreceiver.dto;
+package pl.lotto.resultchecker;
 
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
-
 @Builder
 @Data
-public class TicketDto {
+class Winner {
 
     private String hash;
     private Set<Integer> numbers;

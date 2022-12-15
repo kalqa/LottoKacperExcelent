@@ -47,7 +47,6 @@ public class WinningNumbersGeneratorFacadeTest {
         //when
         //then
         assertThrows(IllegalStateException.class, () -> numbersGenerator.generateWinningNumbers(), "Number out of range!");
-//        TODO: Nie czaje czemu nie rzuca wyjatku
 
 
     }
