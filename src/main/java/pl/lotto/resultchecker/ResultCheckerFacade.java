@@ -7,9 +7,7 @@ import pl.lotto.numberreceiver.dto.TicketDto;
 import pl.lotto.resultchecker.dto.WinnerDto;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,7 +28,7 @@ public class ResultCheckerFacade {
                 .build();
     }
 
-    private static Set<Integer> retrieveMatchingNumbers(Set<Integer> winningNumbers, Set<Integer> usersNumbers) {
+    private Set<Integer> retrieveMatchingNumbers(Set<Integer> winningNumbers, Set<Integer> usersNumbers) {
         return usersNumbers.stream()
                 .filter(winningNumbers::contains)
                 .collect(Collectors.toSet());

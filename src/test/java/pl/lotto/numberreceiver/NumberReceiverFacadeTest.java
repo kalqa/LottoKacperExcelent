@@ -17,11 +17,10 @@ public class NumberReceiverFacadeTest {
     @Test
     public void it_should_return_correct_response_when_user_input_six_numbers_in_range() {
         // given
-        NumberValidator numberValidator = new NumberValidator();
-        DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
+        DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         LocalDate nextDrawDate = drawDateGenerator.getNextDrawDate();
 
         TicketDto generatedTicket = TicketDto.builder()
@@ -109,10 +108,8 @@ public class NumberReceiverFacadeTest {
     @Test
     public void it_should_return_correct_hash() {
         // given
-        NumberValidator numberValidator = new NumberValidator();
-        DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
 
         // when
@@ -126,32 +123,25 @@ public class NumberReceiverFacadeTest {
     @Test
     public void it_should_return_correct_draw_date() {
         // given
-        Clock clock = Clock.fixed(LocalDateTime.of(2022,11,19,10,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/Warsaw"));
-        NumberValidator numberValidator = new NumberValidator();
-        DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
+        Clock clock = Clock.fixed(LocalDateTime.of(2022, 11, 19, 11, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
 
         // when
         LocalDate testedDrawDate = numberReceiverFacade.inputNumbers(numbersFromUser).ticketDto().getDrawDate();
 
         // then
-
-        LocalDate expectedDrawDate =LocalDate.of(2022,11,19);
-
+        LocalDate expectedDrawDate = LocalDate.of(2022, 11, 19);
         assertThat(testedDrawDate).isEqualTo(expectedDrawDate);
-        //TODO: clock dodaje godzine do przodu widać w debugerze dlaczego ? niżej też
     }
 
     @Test
-    public void it_should_return_correct_draw_date_when_date_is_Saturday_afternoon() {
+    public void it_should_return_next_Saturday_draw_date_when_date_is_Saturday_afternoon() {
         // given
-        Clock clock = Clock.fixed(LocalDateTime.of(2022,11,19,12,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/Warsaw"));
-        NumberValidator numberValidator = new NumberValidator();
-        DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
+        Clock clock = Clock.fixed(LocalDateTime.of(2022, 11, 19, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(numberValidator, drawDateGenerator, hashGenerator);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
 
         // when
@@ -159,7 +149,7 @@ public class NumberReceiverFacadeTest {
 
         // then
 
-        LocalDate expectedDrawDate =LocalDate.of(2022,11,26);
+        LocalDate expectedDrawDate = LocalDate.of(2022, 11, 26);
 
         assertThat(testedDrawDate).isEqualTo(expectedDrawDate);
     }
