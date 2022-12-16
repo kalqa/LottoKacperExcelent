@@ -24,7 +24,7 @@ public class ResultCheckerFacade {
         List<TicketDto> allTicketsByDate = receiver.getAllTicketsByDate(drawDate);
         Set<Integer> winningNumbers = generator.generateWinningNumbers().getWinningNumbers();
 
-        List<WinnerDto> winnersDto = retrieveWinnersList(allTicketsByDate, winningNumbers);
+        List<WinnerDto> winnersDto = retrievePlayers(allTicketsByDate, winningNumbers);
 //        winnersRepository.saveAll(winnersDto);
 
         return WinnersDto.builder()
@@ -32,8 +32,8 @@ public class ResultCheckerFacade {
                 .build();
     }
 
-    private static List<WinnerDto> retrieveWinnersList(List<TicketDto> allTicketsByDate, Set<Integer> winningNumbers) {
-        List<WinnerDto> winnersDto = allTicketsByDate.stream()
+    private List<WinnerDto> retrievePlayers(List<TicketDto> allTicketsByDate, Set<Integer> winningNumbers) {
+        return allTicketsByDate.stream()
                 .filter(ticketDto -> ticketDto.getNumbers().containsAll(winningNumbers))
                 .map(ticketDto -> WinnerDto.builder()
                         .hash(ticketDto.getHash())
@@ -41,7 +41,6 @@ public class ResultCheckerFacade {
                         .drawDate(ticketDto.getDrawDate())
                         .build())
                 .collect(Collectors.toList());
-        return winnersDto;
     }
 
     public WinnerDto generateResult(String hash) {

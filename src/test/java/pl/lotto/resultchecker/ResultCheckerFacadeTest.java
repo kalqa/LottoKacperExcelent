@@ -51,8 +51,9 @@ class ResultCheckerFacadeTest {
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerFacade(generatorFacade, receiverFacade);
 
         //when
-        List<WinnerDto> winners = resultCheckerFacade.generateWinners().getWinners();
+        WinnersDto winnersDto = resultCheckerFacade.generateWinners();
         //then
+        List<WinnerDto> winners = winnersDto.getWinners();
         WinnerDto winner = WinnerDto.builder()
                 .hash("001")
                 .numbers(Set.of(1, 2, 3, 4, 5, 6))

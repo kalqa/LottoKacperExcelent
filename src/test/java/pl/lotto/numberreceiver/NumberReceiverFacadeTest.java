@@ -1,16 +1,16 @@
 package pl.lotto.numberreceiver;
 
-import org.junit.jupiter.api.Test;
-import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
-import pl.lotto.numberreceiver.dto.TicketDto;
-
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.jupiter.api.Test;
+import pl.lotto.AdjustableClock;
+import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
+import pl.lotto.numberreceiver.dto.TicketDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class NumberReceiverFacadeTest {
@@ -173,23 +173,29 @@ public class NumberReceiverFacadeTest {
         // given
         HashGenerable hashGenerator = new HashGenerator();
 
-        Clock clock = Clock.fixed(LocalDateTime.of(2022, 12, 15, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
+        Instant fixedInstant = LocalDateTime.of(2022, 12, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
+        ZoneId of = ZoneId.of("Europe/London");
+//        Clock clock = Clock.fixed(fixedInstant, of);
+        AdjustableClock clock = new AdjustableClock(fixedInstant, of);
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock, ticketRepository);
         NumberReceiverResponseDto numberReceiverResponseDto = numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
 
 
-        Clock clock1 = Clock.fixed(LocalDateTime.of(2022, 12, 16, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
-        NumberReceiverFacade numberReceiverFacade1 = new NumberReceiverConfiguration().createForTest(hashGenerator, clock1, ticketRepository);
-        NumberReceiverResponseDto numberReceiverResponseDto1 = numberReceiverFacade1.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
+//        Clock clock1 = Clock.fixed(LocalDateTime.of(2022, 12, 16, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
+        clock.plusDays(1);
+//        NumberReceiverFacade numberReceiverFacade1 = new NumberReceiverConfiguration().createForTest(hashGenerator, clock1, ticketRepository);
+        NumberReceiverResponseDto numberReceiverResponseDto1 = numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
 
 
-        Clock clock2 = Clock.fixed(LocalDateTime.of(2022, 12, 17, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
-        NumberReceiverFacade numberReceiverFacade2 = new NumberReceiverConfiguration().createForTest(hashGenerator, clock2, ticketRepository);
-        NumberReceiverResponseDto numberReceiverResponseDto2 = numberReceiverFacade2.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
+//        Clock clock2 = Clock.fixed(LocalDateTime.of(2022, 12, 17, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
+        clock.plusDays(1);
+//        NumberReceiverFacade numberReceiverFacade2 = new NumberReceiverConfiguration().createForTest(hashGenerator, clock2, ticketRepository);
+        NumberReceiverResponseDto numberReceiverResponseDto2 = numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
 
-        Clock clock3 = Clock.fixed(LocalDateTime.of(2022, 12, 18, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
-        NumberReceiverFacade numberReceiverFacade3 = new NumberReceiverConfiguration().createForTest(hashGenerator, clock3, ticketRepository);
-        NumberReceiverResponseDto numberReceiverResponseDto3 = numberReceiverFacade3.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
+//        Clock clock3 = Clock.fixed(LocalDateTime.of(2022, 12, 18, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
+        clock.plusDays(1);
+//        NumberReceiverFacade numberReceiverFacade3 = new NumberReceiverConfiguration().createForTest(hashGenerator, clock3, ticketRepository);
+        NumberReceiverResponseDto numberReceiverResponseDto3 = numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
 
         TicketDto ticketDto = numberReceiverResponseDto.ticketDto();
         TicketDto ticketDto1 = numberReceiverResponseDto1.ticketDto();
@@ -199,7 +205,7 @@ public class NumberReceiverFacadeTest {
         // when
         List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByDate(drawDate);
         // then
-        assertThat(allTicketsByDate).containsOnly(ticketDto,ticketDto1);
+        assertThat(allTicketsByDate).containsOnly(ticketDto, ticketDto1);
         //TODO: to mi się nie podoba na pewno jest jakaś opcja na zrobienie tego porządnie
     }
 
