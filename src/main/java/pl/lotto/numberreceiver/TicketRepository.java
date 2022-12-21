@@ -1,7 +1,5 @@
 package pl.lotto.numberreceiver;
 
-import pl.lotto.numberreceiver.dto.TicketDto;
-
 import java.time.LocalDateTime;
 import java.util.Collection;
 

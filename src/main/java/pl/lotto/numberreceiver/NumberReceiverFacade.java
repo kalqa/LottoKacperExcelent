@@ -1,15 +1,17 @@
 package pl.lotto.numberreceiver;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 import pl.lotto.numberreceiver.dto.TicketDto;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pl.lotto.numberreceiver.ValidationResult.INPUT_SUCCESS;
+
 @AllArgsConstructor
 public class NumberReceiverFacade {
 
@@ -17,7 +19,6 @@ public class NumberReceiverFacade {
     private final DrawDateGenerator drawDateGenerator;
     private final HashGenerable hashGenerator;
     private final TicketRepository ticketRepository;
-
 
 
     public NumberReceiverResponseDto inputNumbers(Set<Integer> numbersFromUser) {

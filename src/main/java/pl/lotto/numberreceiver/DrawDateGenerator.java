@@ -1,6 +1,9 @@
 package pl.lotto.numberreceiver;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 
@@ -19,9 +22,9 @@ class DrawDateGenerator {
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
         LocalDateTime drawDate = currentDateTime.with(NEXT_DRAW_DAY);
         if (isSaturdayAndBeforeNoon(currentDateTime)) {
-            return LocalDateTime.of(currentDateTime.toLocalDate(),DRAW_TIME);
+            return LocalDateTime.of(currentDateTime.toLocalDate(), DRAW_TIME);
         }
-        return LocalDateTime.of(drawDate.toLocalDate(),DRAW_TIME);
+        return LocalDateTime.of(drawDate.toLocalDate(), DRAW_TIME);
     }
 
     private boolean isSaturdayAndBeforeNoon(LocalDateTime currentDateTime) {
