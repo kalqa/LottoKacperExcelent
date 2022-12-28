@@ -7,9 +7,8 @@ import java.util.stream.Collectors;
 
 class WinnersDtoMapper {
 
-    List<ResultDto> mapPlayersToWinners(List<Player> players) {
+    static List<ResultDto> mapPlayersToResults(List<Player> players) {
         return players.stream()
-                .filter(Player::isWinner)
                 .map(player -> ResultDto.builder()
                         .hash(player.getHash())
                         .numbers(player.getNumbers())

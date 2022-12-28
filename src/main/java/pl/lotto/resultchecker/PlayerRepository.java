@@ -5,7 +5,7 @@ import java.util.List;
 public interface PlayerRepository {
 
 
-    void saveAll(List<Player> players);
+    List<Player> saveAll(List<Player> players);
 
     List<Player> findAll();
 

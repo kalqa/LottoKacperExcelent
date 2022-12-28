@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class PlayerRepositoryTestImpl implements PlayerRepository {
 
@@ -12,8 +11,8 @@ public class PlayerRepositoryTestImpl implements PlayerRepository {
 
 
     @Override
-    public void saveAll(List<Player> players) {
-        players.stream()
+    public List<Player> saveAll(List<Player> players) {
+        return players.stream()
                 .map(player -> playersList.put(player.getHash(), player))
                 .toList();
 

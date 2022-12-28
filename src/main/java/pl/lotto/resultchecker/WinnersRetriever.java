@@ -1,40 +1,54 @@
 package pl.lotto.resultchecker;
 
+import lombok.AllArgsConstructor;
 import pl.lotto.numberreceiver.dto.TicketDto;
-import pl.lotto.resultchecker.dto.ResultDto;
+import pl.lotto.resultchecker.Player.PlayerBuilder;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
+class WinnersRetriever {
+    private final PlayerRepository playerRepository;
+    private final int NUMBERS_WHEN_PLAYER_WON = 3;
 
-record WinnersRetriever(
-        PlayerRepository playerRepository,
-        WinnersDtoMapper winnersDtoMapper) {
-
-    List<ResultDto> retrieveWinners(List<TicketDto> allTicketsByDate, Set<Integer> winningNumbers) {
+    List<Player> retrieveWinners(List<TicketDto> allTicketsByDate, Set<Integer> winningNumbers) {
         List<Player> players = establishWinners(allTicketsByDate, winningNumbers);
         playerRepository.saveAll(players);
-        return winnersDtoMapper.mapPlayersToWinners(players);
+        return players;
 
     }
 
     private List<Player> establishWinners(List<TicketDto> allTicketsByDate, Set<Integer> winningNumbers) {
-        List<Player> players = allTicketsByDate.stream()
+        return allTicketsByDate.stream()
                 .map(ticket -> {
-                    Set<Integer> hitNumbers = ticket.getNumbers().stream()
-                            .filter(winningNumbers::contains)
-                            .collect(Collectors.toSet());
-                    return Player.builder()
-                            .hash(ticket.getHash())
-                            .numbers(ticket.getNumbers())
-                            .hitNumbers(hitNumbers)
-                            .drawDate(ticket.getDrawDate())
-                            .isWinner(false)
-                            .build();
+                    Set<Integer> hitNumbers = calculateHits(winningNumbers, ticket);
+                    return buildPlayer(ticket, hitNumbers);
                 })
                 .toList();
-        players.forEach(player -> player.isWinner(player.getHitNumbers()));
-        return players;
+    }
+
+    private Set<Integer> calculateHits(Set<Integer> winningNumbers, TicketDto ticket) {
+        return ticket.getNumbers().stream()
+                .filter(winningNumbers::contains)
+                .collect(Collectors.toSet());
+    }
+
+    private Player buildPlayer(TicketDto ticket, Set<Integer> hitNumbers) {
+        PlayerBuilder builder = Player.builder();
+        if (isWinner(hitNumbers)) {
+            builder.isWinner(true);
+        }
+        return builder
+                .hash(ticket.getHash())
+                .numbers(ticket.getNumbers())
+                .hitNumbers(hitNumbers)
+                .drawDate(ticket.getDrawDate())
+                .build();
+    }
+
+    private boolean isWinner(Set<Integer> hitNumbers) {
+        return hitNumbers.size() >= NUMBERS_WHEN_PLAYER_WON;
     }
 }

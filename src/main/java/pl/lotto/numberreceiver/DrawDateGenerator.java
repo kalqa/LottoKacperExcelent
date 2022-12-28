@@ -20,18 +20,14 @@ class DrawDateGenerator {
 
     public LocalDateTime getNextDrawDate() {
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
-        LocalDateTime drawDate = currentDateTime.with(NEXT_DRAW_DAY);
         if (isSaturdayAndBeforeNoon(currentDateTime)) {
             return LocalDateTime.of(currentDateTime.toLocalDate(), DRAW_TIME);
         }
+        LocalDateTime drawDate = currentDateTime.with(NEXT_DRAW_DAY);
         return LocalDateTime.of(drawDate.toLocalDate(), DRAW_TIME);
     }
 
     private boolean isSaturdayAndBeforeNoon(LocalDateTime currentDateTime) {
         return currentDateTime.getDayOfWeek().equals(DayOfWeek.SATURDAY) && currentDateTime.toLocalTime().isBefore(DRAW_TIME);
     }
-
-
-    //TODO: to miało zostać wsadzone do bazy jakoś
-
 }

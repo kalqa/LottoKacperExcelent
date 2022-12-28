@@ -7,6 +7,7 @@ import java.util.List;
 
 @Builder
 @Data
-public class WinnersDto {
-    private List<ResultDto> winners;
+public class PlayersDto {
+    private List<ResultDto> results;
+    private String message;
 }

@@ -1,6 +1,7 @@
 package pl.lotto.numberreceiver;
 
 import org.junit.jupiter.api.Test;
+import pl.lotto.AdjustableClock;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 import pl.lotto.numberreceiver.dto.TicketDto;
 
@@ -185,7 +186,7 @@ public class NumberReceiverFacadeTest {
         TicketDto ticketDto1 = numberReceiverResponseDto1.ticketDto();
         LocalDateTime drawDate = numberReceiverResponseDto.ticketDto().getDrawDate();
         // when
-        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByDate(drawDate);
+        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByNextDrawDate(drawDate);
         // then
         assertThat(allTicketsByDate).containsOnly(ticketDto, ticketDto1);
     }
@@ -199,7 +200,7 @@ public class NumberReceiverFacadeTest {
         LocalDateTime drawDate = LocalDateTime.now(clock);
 
         // when
-        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByDate(drawDate);
+        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByNextDrawDate(drawDate);
         // then
         assertThat(allTicketsByDate).isEmpty();
     }
@@ -216,7 +217,7 @@ public class NumberReceiverFacadeTest {
         LocalDateTime drawDate = numberReceiverResponseDto.ticketDto().getDrawDate();
 
         // when
-        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByDate(drawDate.plusWeeks(1L));
+        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByNextDrawDate(drawDate.plusWeeks(1L));
         // then
         assertThat(allTicketsByDate).isEmpty();
     }

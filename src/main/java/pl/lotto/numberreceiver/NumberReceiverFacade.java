@@ -48,8 +48,12 @@ public class NumberReceiverFacade {
         return new NumberReceiverResponseDto(generatedTicket, INPUT_SUCCESS.info);
     }
 
+    public List<TicketDto> getAllTicketsByNextDrawDate() {
+        LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
+      return getAllTicketsByNextDrawDate(nextDrawDate);
+    }
 
-    public List<TicketDto> getAllTicketsByDate(LocalDateTime date) {
+    public List<TicketDto> getAllTicketsByNextDrawDate(LocalDateTime date) {
         LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
         if (date.isAfter(nextDrawDate)) {
             return Collections.emptyList();
@@ -65,9 +69,6 @@ public class NumberReceiverFacade {
                 .collect(Collectors.toList());
     }
 
-    public LocalDateTime nextDrawDate() {
-        return drawDateGenerator.getNextDrawDate();
-    }
 
     public TicketDto findByHash(String hash) {
         Ticket ticket = ticketRepository.findByHash(hash);
