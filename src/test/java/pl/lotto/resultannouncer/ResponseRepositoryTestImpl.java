@@ -1,19 +1,23 @@
 package pl.lotto.resultannouncer;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ResponseRepositoryTestImpl implements ResponseRepository {
 
-    private final Map<String, Response> responseList = new ConcurrentHashMap<>();
+    private final Map<String, ResultResponse> responseList = new ConcurrentHashMap<>();
     @Override
-    public Response save(Response response) {
-        return responseList.put(response.getHash(),response);
+    public ResultResponse save(ResultResponse resultResponse) {
+        return responseList.put(resultResponse.getHash(), resultResponse);
     }
 
     @Override
-    public Response findById(String hash) {
+    public ResultResponse findById(String hash) {
         return responseList.get(hash);
+    }
+
+    @Override
+    public boolean exists(String hash) {
+        return responseList.containsKey(hash);
     }
 }

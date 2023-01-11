@@ -48,12 +48,12 @@ public class NumberReceiverFacade {
         return new NumberReceiverResponseDto(generatedTicket, INPUT_SUCCESS.info);
     }
 
-    public List<TicketDto> getAllTicketsByNextDrawDate() {
+    public List<TicketDto> retrieveAllTicketsByNextDrawDate() {
         LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
-      return getAllTicketsByNextDrawDate(nextDrawDate);
+      return retrieveAllTicketsByNextDrawDate(nextDrawDate);
     }
 
-    public List<TicketDto> getAllTicketsByNextDrawDate(LocalDateTime date) {
+    public List<TicketDto> retrieveAllTicketsByNextDrawDate(LocalDateTime date) {
         LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
         if (date.isAfter(nextDrawDate)) {
             return Collections.emptyList();

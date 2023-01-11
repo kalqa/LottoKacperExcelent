@@ -39,7 +39,7 @@ class ResultCheckerFacadeTest {
         when(winningNumbersGeneratorFacade.generateWinningNumbers()).thenReturn(WinningNumbersDto.builder()
                 .winningNumbers(Set.of(1, 2, 3, 4, 5, 6))
                 .build());
-        when(numberReceiverFacade.getAllTicketsByNextDrawDate()).thenReturn(
+        when(numberReceiverFacade.retrieveAllTicketsByNextDrawDate()).thenReturn(
                 List.of(TicketDto.builder()
                                 .hash("001")
                                 .numbers(Set.of(1, 2, 3, 4, 5, 6))
@@ -126,7 +126,7 @@ class ResultCheckerFacadeTest {
                 .winningNumbers(Set.of(1, 2, 3, 4, 5, 6))
                 .build());
         String hash = "001";
-        when(numberReceiverFacade.getAllTicketsByNextDrawDate()).thenReturn(
+        when(numberReceiverFacade.retrieveAllTicketsByNextDrawDate()).thenReturn(
                 List.of(TicketDto.builder()
                                 .hash(hash)
                                 .numbers(Set.of(7, 8, 9, 10, 11, 12))

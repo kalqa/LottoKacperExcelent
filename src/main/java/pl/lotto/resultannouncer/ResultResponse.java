@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Builder
 @Data
-class Response {
+class ResultResponse {
 
     private String hash;
     private Set<Integer> numbers;

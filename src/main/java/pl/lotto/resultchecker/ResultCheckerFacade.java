@@ -23,7 +23,7 @@ public class ResultCheckerFacade {
 
 
     public PlayersDto generateWinners() {
-        List<TicketDto> allTicketsByDate = numberReceiverFacade.getAllTicketsByNextDrawDate();
+        List<TicketDto> allTicketsByDate = numberReceiverFacade.retrieveAllTicketsByNextDrawDate();
         WinningNumbersDto winningNumbersDto = winningNumbersGeneratorFacade.generateWinningNumbers();
         Set<Integer> winningNumbers = winningNumbersDto.getWinningNumbers();
         if (winningNumbers == null || winningNumbers.isEmpty()) {
