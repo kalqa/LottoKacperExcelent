@@ -17,8 +17,8 @@ public class NumberReceiverRestController {
     private final NumberReceiverFacade numberReceiverFacade;
 
     @PostMapping("/inputNumbers")
-    public ResponseEntity<NumberReceiverResponseDto> f() {
-        NumberReceiverResponseDto numberReceiverResponseDto = numberReceiverFacade.inputNumbers(Set.of(1, 2, 3, 4, 5, 6));
+    public ResponseEntity<NumberReceiverResponseDto> f(@RequestBody NumberReceiverRequestDto requestDto) {
+        NumberReceiverResponseDto numberReceiverResponseDto = numberReceiverFacade.inputNumbers(requestDto.inputNumbers());
         return ResponseEntity.ok(numberReceiverResponseDto);
     }
 }
