@@ -69,6 +69,10 @@ public class NumberReceiverFacade {
                 .collect(Collectors.toList());
     }
 
+    public LocalDateTime retrieveNextDrawDate() {
+        return drawDateGenerator.getNextDrawDate();
+    }
+
 
     public TicketDto findByHash(String hash) {
         Ticket ticket = ticketRepository.findByHash(hash);

@@ -153,5 +153,4 @@ class ResultAnnouncerFacadeTest {
         ResultAnnouncerResponseDto expectedResult = new ResultAnnouncerResponseDto(null,ALREADY_CHECKED.info);
         assertThat(resultAnnouncerResponseDto).isEqualTo(expectedResult);
     }
-    //TODO:sprawdzić ten test
 }

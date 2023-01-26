@@ -32,6 +32,7 @@ public class ResultCheckerFacade {
                     .build();
         }
         List<Player> players = winnerGenerator.retrieveWinners(allTicketsByDate, winningNumbers);
+        playerRepository.saveAll(players);
         return PlayersDto.builder()
                 .results(mapPlayersToResults(players))
                 .message("Winners succeeded to retrieve")

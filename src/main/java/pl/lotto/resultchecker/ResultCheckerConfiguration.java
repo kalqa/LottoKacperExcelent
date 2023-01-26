@@ -7,7 +7,7 @@ public class ResultCheckerConfiguration {
 
 
     ResultCheckerFacade createForTest(WinningNumbersGeneratorFacade generatorFacade, NumberReceiverFacade receiverFacade, PlayerRepository playerRepository) {
-        WinnersRetriever winnerGenerator = new WinnersRetriever(playerRepository);
+        WinnersRetriever winnerGenerator = new WinnersRetriever();
         return new ResultCheckerFacade(generatorFacade, receiverFacade, playerRepository, winnerGenerator);
     }
 }

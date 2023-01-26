@@ -1,21 +1,36 @@
 package pl.lotto.numbergenerator;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
+import pl.lotto.numberreceiver.NumberReceiverFacade;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WinningNumbersGeneratorFacadeTest {
+
+    private final WinningNumbersRepository winningNumbersRepository = new WinningNumbersRepositoryTestImpl();
+    NumberReceiverFacade numberReceiverFacade;
+
+    @BeforeEach
+    public void setUp() {
+        numberReceiverFacade = mock(NumberReceiverFacade.class);
+    }
 
     @Test
     public void it_should_return_set_of_required_size() {
         //given
         RandomNumberGenerable generator = new RandomGenerator();
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -26,7 +41,8 @@ public class WinningNumbersGeneratorFacadeTest {
     public void it_should_return_set_of_required_size_within_required_range() {
         //given
         RandomNumberGenerable generator = new RandomGenerator();
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -43,10 +59,11 @@ public class WinningNumbersGeneratorFacadeTest {
         //given
         Set<Integer> numbersOutOfRange = Set.of(1, 2, 3, 4, 5, 100);
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl(numbersOutOfRange);
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         //then
-        assertThrows(IllegalStateException.class, () -> numbersGenerator.generateWinningNumbers(), "Number out of range!");
+        assertThrows(IllegalStateException.class, numbersGenerator::generateWinningNumbers, "Number out of range!");
 
 
     }
@@ -55,13 +72,58 @@ public class WinningNumbersGeneratorFacadeTest {
     public void it_should_return_collection_of_unique_values() {
         //given
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator);
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
         int generatedNumbersSize = new HashSet<>(generatedNumbers.getWinningNumbers()).size();
         assertThat(generatedNumbersSize).isEqualTo(6);
     }
+
+    @Test
+    public void it_should_return_winning_numbers_by_given_date() {
+        //given
+        LocalDateTime drawDate = LocalDateTime.of(2022, 12, 17, 12, 0, 0);
+        Set<Integer> generatedWinningNumbers = Set.of(1, 2, 3, 4, 5, 6);
+        String id = UUID.randomUUID().toString();
+        WinningNumbers winningNumbers = WinningNumbers.builder()
+                .id(id)
+                .date(drawDate)
+                .winningNumbers(generatedWinningNumbers)
+                .build();
+        winningNumbersRepository.save(winningNumbers);
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        //when
+        WinningNumbersDto winningNumbersDto = numbersGenerator.retrieveWinningNumberByDate(drawDate);
+        //then
+        WinningNumbersDto expectedWinningNumbersDto = WinningNumbersDto.builder()
+                .date(drawDate)
+                .winningNumbers(generatedWinningNumbers)
+                .build();
+        assertThat(expectedWinningNumbersDto).isEqualTo(winningNumbersDto);
+        //TODO: dlaczego ten test pokrywa całą metodę w całości skoro jest tam optional z wyjątkiem
+    }
+
+    @Test
+    public void it_should_throw_an_exception_when_fail_to_retrieve_numbers_by_given_date() {
+        //given
+        LocalDateTime drawDate = LocalDateTime.of(2022, 12, 17, 12, 0, 0);
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        //when
+        WinningNumbersDto winningNumbersDto = numbersGenerator.retrieveWinningNumberByDate(drawDate);
+        //then
+        assertThrows(RuntimeException.class, numbersGenerator::generateWinningNumbers,"Not Found");
+    }
+    //TODO: zerknąć na ten test leci NullPointer bo nie ma w bazie ale my rzucamy runtime a i tak leci null dlaczego ?
+    // w implementacji musialbym zmienic optional na Optional.empty() ale wtedy ten test
+    // wyzej się posypie, jak to zrobić by grało? Osobną klase implementacji tworzyć czy jest jakis inny sposób ?
+
+
 }
 
 

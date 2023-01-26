@@ -3,6 +3,7 @@ package pl.lotto.numbergenerator.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -10,4 +11,5 @@ import java.util.Set;
 public class WinningNumbersDto {
 
     private Set<Integer> winningNumbers;
+    private LocalDateTime date;
 }

@@ -23,6 +23,7 @@
         <lombok.version>1.18.24</lombok.version>
         <mockito-core.version>4.9.0</mockito-core.version>
         <testcontainers.version>1.17.4</testcontainers.version>
+        <awaitility.version>4.2.0</awaitility.version>
     </properties>
 
     <dependencies>
@@ -81,6 +82,14 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
     </dependencies>
 
 </project>

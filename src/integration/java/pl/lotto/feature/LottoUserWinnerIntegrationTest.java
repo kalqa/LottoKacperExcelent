@@ -2,7 +2,11 @@ package pl.lotto.feature;
 
 
 import com.fasterxml.jackson.databind.*;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.*;
@@ -17,9 +21,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import pl.*;
+import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
 import pl.lotto.numberreceiver.dto.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,6 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Testcontainers
 public class LottoUserWinnerIntegrationTest {
+
+    @Autowired
+    WinningNumbersGeneratorFacade winningNumbersGeneratorFacade;
 
     @Autowired
     MockMvc mockMvc;
@@ -63,11 +72,25 @@ public class LottoUserWinnerIntegrationTest {
         String json = mvcResult.getResponse().getContentAsString();
         NumberReceiverResponseDto result = objectMapper.readValue(json, NumberReceiverResponseDto.class);
 
+        LocalDateTime ticketDrawDate = LocalDateTime.of(2022, 11, 19, 12, 0, 0);
         assertAll(
                 () -> assertThat(result.message()).isEqualTo("SUCCESS"),
-                () -> assertThat(result.ticketDto().getDrawDate()).isEqualTo(LocalDateTime.of(2022, 11, 19, 12, 0, 0)
-        ));
+                () -> assertThat(result.ticketDto().getDrawDate()).isEqualTo(ticketDrawDate));
 
         //step 2:
+        await().atMost(10, TimeUnit.SECONDS)
+                .pollInterval(Duration.ofSeconds(1L))
+                .until(() -> {
+                    try {
+                        return !winningNumbersGeneratorFacade.retrieveWinningNumberByDate(ticketDrawDate).getWinningNumbers().isEmpty();
+
+                    } catch (RuntimeException e) {
+
+                        return false;
+                    }
+                });
     }
 }
+
+
+

@@ -10,12 +10,10 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 class WinnersRetriever {
-    private final PlayerRepository playerRepository;
     private final int NUMBERS_WHEN_PLAYER_WON = 3;
 
     List<Player> retrieveWinners(List<TicketDto> allTicketsByDate, Set<Integer> winningNumbers) {
         List<Player> players = establishWinners(allTicketsByDate, winningNumbers);
-        playerRepository.saveAll(players);
         return players;
 
     }
