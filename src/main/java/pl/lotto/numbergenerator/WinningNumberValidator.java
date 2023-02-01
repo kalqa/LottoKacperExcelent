@@ -4,7 +4,7 @@ import java.util.Set;
 
 class WinningNumberValidator {
 
-    private final int LOWER_BAND = 1;
+    private final int LOWER_BAND = 0;
     private final int UPPER_BAND = 99;
 
 

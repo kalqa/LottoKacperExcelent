@@ -7,7 +7,7 @@ import java.util.Set;
 
 class RandomGenerator implements RandomNumberGenerable {
 
-    private final int LOWER_BAND = 1;
+    private final int LOWER_BAND = 0;
     private final int UPPER_BAND = 99;
 
     private final int RANDOM_NUMBER_BOUND = (UPPER_BAND - LOWER_BAND) + 1;

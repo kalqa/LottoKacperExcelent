@@ -11,7 +11,5 @@ public interface TicketRepository extends MongoRepository<Ticket, String> {
 
     Collection<Ticket> findAllTicketsByDrawDate(LocalDateTime drawDate);
 
-   // Ticket save(Ticket ticket);
-
     Ticket findByHash(String hash);
 }

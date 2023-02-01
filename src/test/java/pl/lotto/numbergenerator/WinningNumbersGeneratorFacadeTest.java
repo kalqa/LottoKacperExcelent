@@ -104,7 +104,6 @@ public class WinningNumbersGeneratorFacadeTest {
                 .winningNumbers(generatedWinningNumbers)
                 .build();
         assertThat(expectedWinningNumbersDto).isEqualTo(winningNumbersDto);
-        //TODO: dlaczego ten test pokrywa całą metodę w całości skoro jest tam optional z wyjątkiem
     }
 
     @Test
@@ -115,15 +114,9 @@ public class WinningNumbersGeneratorFacadeTest {
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
         WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
-        WinningNumbersDto winningNumbersDto = numbersGenerator.retrieveWinningNumberByDate(drawDate);
         //then
-        assertThrows(RuntimeException.class, numbersGenerator::generateWinningNumbers,"Not Found");
+        assertThrows(RuntimeException.class, () -> numbersGenerator.retrieveWinningNumberByDate(drawDate),"Not Found");
     }
-    //TODO: zerknąć na ten test leci NullPointer bo nie ma w bazie ale my rzucamy runtime a i tak leci null dlaczego ?
-    // w implementacji musialbym zmienic optional na Optional.empty() ale wtedy ten test
-    // wyzej się posypie, jak to zrobić by grało? Osobną klase implementacji tworzyć czy jest jakis inny sposób ?
-
-
 }
 
 

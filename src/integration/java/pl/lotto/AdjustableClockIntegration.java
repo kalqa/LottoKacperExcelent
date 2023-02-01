@@ -2,19 +2,19 @@ package pl.lotto;
 
 import java.time.*;
 
-public class AdjustableClock extends Clock {
+public class AdjustableClockIntegration extends Clock {
 
     private final ZoneId zone;
     protected Instant instant;
 
-    public AdjustableClock(Instant initialInstant, ZoneId zone) {
+    public AdjustableClockIntegration(Instant initialInstant, ZoneId zone) {
         this.instant = initialInstant;
         this.zone = zone;
     }
 
-    public static AdjustableClock ofLocalDateAndLocalTime(LocalDate date, LocalTime time, ZoneId zone) {
+    public static AdjustableClockIntegration ofLocalDateAndLocalTime(LocalDate date, LocalTime time, ZoneId zone) {
         ZonedDateTime zoneDateTime = createZoneDateTime(date, time, zone);
-        return new AdjustableClock(zoneDateTime.toInstant(), zone);
+        return new AdjustableClockIntegration(zoneDateTime.toInstant(), zone);
     }
 
     protected static ZonedDateTime createZoneDateTime(LocalDate date, LocalTime time, ZoneId zone) {
@@ -47,7 +47,7 @@ public class AdjustableClock extends Clock {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof AdjustableClock other
+        return obj instanceof AdjustableClockIntegration other
                 && instant.equals(other.instant)
                 && zone.equals(other.zone);
     }

@@ -1,19 +1,18 @@
 package pl.lotto.feature;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import pl.lotto.AdjustableClockIntegration;
 
 @Configuration
 public class IntegrationConfiguration {
 
     @Bean
     @Primary
-    Clock clock(){
-        return Clock.fixed(LocalDateTime.of(2022, 11, 16, 10, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
+    AdjustableClockIntegration clock(){
+        return AdjustableClockIntegration.ofLocalDateAndLocalTime(LocalDate.of(2022, 11,16),LocalTime.of(10,0),ZoneId.systemDefault());
     }
 }

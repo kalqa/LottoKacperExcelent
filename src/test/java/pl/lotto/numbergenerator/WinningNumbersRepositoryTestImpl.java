@@ -24,7 +24,8 @@ public class WinningNumbersRepositoryTestImpl implements WinningNumbersRepositor
 
     @Override
     public Optional<WinningNumbers> findNumbersByDate(LocalDateTime date) {
-        return Optional.of(winningNumbersList.get(date));
+        return Optional.ofNullable(winningNumbersList.get(date));
+        //return Optional.of(winningNumbersList.get(date));
     }
 
     @Override

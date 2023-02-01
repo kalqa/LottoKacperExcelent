@@ -1,3 +1,12 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+
+lotto:
+  time:
+    drawDayOfWeek: 6
+    drawHour: 12
+    drawMinutes: 0
+    drawSeconds: 0
+  numberGenerator:
+    lotteryRunOccurrence: "${lotto.time.drawSeconds} ${lotto.time.drawMinutes} ${lotto.time.drawHour} * * ${lotto.time.drawDayOfWeek}"

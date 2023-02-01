@@ -21,8 +21,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import pl.*;
+import pl.lotto.AdjustableClockIntegration;
 import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
 import pl.lotto.numberreceiver.dto.*;
+import pl.lotto.resultchecker.ResultCheckerFacade;
+import pl.lotto.resultchecker.dto.PlayersDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -33,16 +36,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {LottoApplication.class, IntegrationConfiguration.class})
 @AutoConfigureMockMvc
 @Testcontainers
+@ActiveProfiles("integration")
 public class LottoUserWinnerIntegrationTest {
 
     @Autowired
     WinningNumbersGeneratorFacade winningNumbersGeneratorFacade;
 
     @Autowired
+    ResultCheckerFacade resultCheckerFacade;
+
+    @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    AdjustableClockIntegration clock;
 
     @Container
     private static final MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
@@ -77,15 +87,27 @@ public class LottoUserWinnerIntegrationTest {
                 () -> assertThat(result.message()).isEqualTo("SUCCESS"),
                 () -> assertThat(result.ticketDto().getDrawDate()).isEqualTo(ticketDrawDate));
 
-        //step 2:
+        //step 2: winning numbers should have been generated
         await().atMost(10, TimeUnit.SECONDS)
                 .pollInterval(Duration.ofSeconds(1L))
                 .until(() -> {
                     try {
                         return !winningNumbersGeneratorFacade.retrieveWinningNumberByDate(ticketDrawDate).getWinningNumbers().isEmpty();
-
                     } catch (RuntimeException e) {
+                        return false;
+                    }
+                });
 
+
+        //step 3: clock is adjusted to 1 minute after draw and results should be generated
+        clock.plusDaysAndMinutes(3,1);
+        resultCheckerFacade.generateWinners();
+        await().atMost(10, TimeUnit.SECONDS)
+                .pollInterval(Duration.ofSeconds(1L))
+                .until(() -> {
+                    try {
+                        return !resultCheckerFacade.generateResult(result.ticketDto().getHash()).getHash().isEmpty();
+                    } catch (RuntimeException e) {
                         return false;
                     }
                 });

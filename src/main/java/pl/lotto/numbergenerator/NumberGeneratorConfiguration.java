@@ -20,7 +20,4 @@ public class NumberGeneratorConfiguration {
         WinningNumberValidator winningNumberValidator = new WinningNumberValidator();
         return new WinningNumbersGeneratorFacade(generator, winningNumberValidator,winningNumbersRepository, numberReceiverFacade);
     }
-
-//    public WinningNumbersGeneratorFacade createForTest(RandomNumberGenerable generator) {
-//    }
 }
