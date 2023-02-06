@@ -1,4 +1,4 @@
-package pl.lotto.infrastructure.controller;
+package pl.lotto.infrastructure.controller.numberreceiver;
 
 
 import lombok.*;
@@ -6,8 +6,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import pl.lotto.numberreceiver.*;
 import pl.lotto.numberreceiver.dto.*;
-
-import java.util.*;
 
 
 @RestController

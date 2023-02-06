@@ -12,19 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class PlayerRepositoryTestImpl implements PlayerRepository {
 
     private final Map<String, Player> playersList = new ConcurrentHashMap<>();
 
-
-//    @Override
-//    public List<Player> saveAll(List<Player> players) {
-//        return players.stream()
-//                .map(player -> playersList.put(player.getHash(), player))
-//                .toList();
-//
-//    }
 
     @Override
     public <S extends Player> S save(S entity) {
@@ -33,9 +27,11 @@ public class PlayerRepositoryTestImpl implements PlayerRepository {
 
     @Override
     public <S extends Player> List<S> saveAll(Iterable<S> entities) {
-            return null;
+        Stream<S> stream = StreamSupport.stream(entities.spliterator(), false);
+        List<S> list = stream.toList();
+        list.forEach(player -> playersList.put(player.getHash(), player));
+        return list;
     }
-
 
 
     @Override

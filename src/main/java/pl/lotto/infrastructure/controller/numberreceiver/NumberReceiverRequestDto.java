@@ -1,4 +1,4 @@
-package pl.lotto.infrastructure.controller;
+package pl.lotto.infrastructure.controller.numberreceiver;
 
 import java.util.Set;
 import lombok.AllArgsConstructor;

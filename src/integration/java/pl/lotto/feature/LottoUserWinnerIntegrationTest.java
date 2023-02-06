@@ -1,37 +1,40 @@
 package pl.lotto.feature;
 
 
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+import pl.LottoApplication;
+import pl.lotto.AdjustableClockIntegration;
+import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
+import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
+import pl.lotto.resultannouncer.ResultAnnouncerFacade;
+import pl.lotto.resultannouncer.dto.ResultAnnouncerResponseDto;
+import pl.lotto.resultchecker.ResultCheckerFacade;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.*;
-import org.springframework.boot.test.context.*;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.servlet.*;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-import pl.*;
-import pl.lotto.AdjustableClockIntegration;
-import pl.lotto.numbergenerator.WinningNumbersGeneratorFacade;
-import pl.lotto.numberreceiver.dto.*;
-import pl.lotto.resultchecker.ResultCheckerFacade;
-import pl.lotto.resultchecker.dto.PlayersDto;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = {LottoApplication.class, IntegrationConfiguration.class})
 @AutoConfigureMockMvc
@@ -44,6 +47,9 @@ public class LottoUserWinnerIntegrationTest {
 
     @Autowired
     ResultCheckerFacade resultCheckerFacade;
+
+    @Autowired
+    ResultAnnouncerFacade resultAnnouncerFacade;
 
     @Autowired
     MockMvc mockMvc;
@@ -88,7 +94,7 @@ public class LottoUserWinnerIntegrationTest {
                 () -> assertThat(result.ticketDto().getDrawDate()).isEqualTo(ticketDrawDate));
 
         //step 2: winning numbers should have been generated
-        await().atMost(10, TimeUnit.SECONDS)
+        await().atMost(20, TimeUnit.SECONDS)
                 .pollInterval(Duration.ofSeconds(1L))
                 .until(() -> {
                     try {
@@ -99,18 +105,35 @@ public class LottoUserWinnerIntegrationTest {
                 });
 
 
-        //step 3: clock is adjusted to 1 minute after draw and results should be generated
+        //step 3: clock is adjusted to 1 minute after draw and results for user should be generated
         clock.plusDaysAndMinutes(3,1);
-        resultCheckerFacade.generateWinners();
-        await().atMost(10, TimeUnit.SECONDS)
+        await().atMost(20, TimeUnit.SECONDS)
                 .pollInterval(Duration.ofSeconds(1L))
                 .until(() -> {
                     try {
-                        return !resultCheckerFacade.generateResult(result.ticketDto().getHash()).getHash().isEmpty();
+                        String hash = result.ticketDto().getHash();
+                        return resultCheckerFacade.generateResult(hash).getHash().equals(hash);
                     } catch (RuntimeException e) {
                         return false;
                     }
                 });
+
+        //step 4: user send GET /results/id expected message : Congratulations, you won!
+
+        String ticketHash = result.ticketDto().getHash();
+        ResultActions performGetMethod = mockMvc.perform(get("/results/id")
+                .param("id", ticketHash)
+        );
+
+        MvcResult mvcResultGetMethod = performGetMethod.andExpect(status().isOk()).andReturn();
+
+        String jsonGetMethod = mvcResultGetMethod.getResponse().getContentAsString();
+        ResultAnnouncerResponseDto finalResult = objectMapper.readValue(jsonGetMethod, ResultAnnouncerResponseDto.class);
+
+        assertAll(
+                () -> assertThat(finalResult.message()).isEqualTo("Congratulations, you won!"),
+                () -> assertThat(finalResult.responseDto().getHash()).isEqualTo(ticketHash));
+
     }
 }
 

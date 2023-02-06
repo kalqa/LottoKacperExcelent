@@ -29,6 +29,12 @@ public class WinningNumbersRepositoryTestImpl implements WinningNumbersRepositor
     }
 
     @Override
+    public boolean existsByDate(LocalDateTime nextDrawDate) {
+        winningNumbersList.get(nextDrawDate);
+        return true;
+    }
+
+    @Override
     public <S extends WinningNumbers> List<S> saveAll(Iterable<S> entities) {
         return null;
     }

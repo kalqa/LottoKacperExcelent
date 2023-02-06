@@ -1,14 +1,16 @@
 package pl.lotto.numbergenerator;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
 import pl.lotto.numberreceiver.NumberReceiverFacade;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Arrays;
 import java.util.Set;
 
 @AllArgsConstructor
+@Slf4j
 public class WinningNumbersGeneratorFacade {
 
     RandomNumberGenerable winningNumberGenerator;
@@ -19,6 +21,7 @@ public class WinningNumbersGeneratorFacade {
     public WinningNumbersDto generateWinningNumbers() {
         LocalDateTime nextDrawDate = numberReceiverFacade.retrieveNextDrawDate();
         Set<Integer> winningNumbers = winningNumberGenerator.generateSixRandomNumbers();
+        log.info(Arrays.toString(winningNumbers.toArray()));
         winningNumberValidator.validate(winningNumbers);
         winningNumbersRepository.save(WinningNumbers.builder()
                 .winningNumbers(winningNumbers)
@@ -36,5 +39,10 @@ public class WinningNumbersGeneratorFacade {
                 .winningNumbers(numbersByDate.getWinningNumbers())
                 .date(numbersByDate.getDate())
                 .build();
+    }
+
+    public boolean areWinningNumbersGeneratedByDate(){
+        LocalDateTime nextDrawDate = numberReceiverFacade.retrieveNextDrawDate();
+        return winningNumbersRepository.existsByDate(nextDrawDate);
     }
 }

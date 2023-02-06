@@ -9,7 +9,8 @@ import java.util.Optional;
 @Repository
 public interface WinningNumbersRepository extends MongoRepository<WinningNumbers,String> {
 
-    WinningNumbers save(WinningNumbers winningNumbers);
 
     Optional<WinningNumbers> findNumbersByDate(LocalDateTime date);
+
+    boolean existsByDate(LocalDateTime nextDrawDate);
 }

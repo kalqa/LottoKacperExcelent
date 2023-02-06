@@ -13,8 +13,8 @@ import java.util.Set;
 @Document
 class Player {
 
+
     @Id
-    private String id;
     private String hash;
     private Set<Integer> numbers;
     private Set<Integer> hitNumbers;

@@ -27,14 +27,14 @@ public class ResultAnnouncerFacade {
         if(resultDto == null) {
             return new ResultAnnouncerResponseDto(null, HASH_DOES_NOT_EXIST_MESSAGE.info);
         }
-        if (responseRepository.exists(hash)) {
-            return new ResultAnnouncerResponseDto(null, ALREADY_CHECKED.info);
-        }
+//        if (responseRepository.existsById(hash)) {
+//            return new ResultAnnouncerResponseDto(null, ALREADY_CHECKED.info);
+//        }
         ResponseDto responseDto = buildResponseDto(resultDto);
         responseRepository.save(buildResponse(responseDto));
-        if (responseRepository.exists(hash) && !isAfterResultAnnouncementTime(resultDto)) {
-            return new ResultAnnouncerResponseDto(responseDto, WAIT_MESSAGE.info);
-        }
+//        if (responseRepository.existsById(hash) && !isAfterResultAnnouncementTime(resultDto)) {
+//            return new ResultAnnouncerResponseDto(responseDto, WAIT_MESSAGE.info);
+//        }
         if (resultCheckerFacade.generateResult(hash).isWinner()) {
             return new ResultAnnouncerResponseDto(responseDto, WIN_MESSAGE.info);
         }

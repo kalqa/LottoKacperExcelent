@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,7 @@ public class WinningNumbersGeneratorFacadeTest {
 
     private final WinningNumbersRepository winningNumbersRepository = new WinningNumbersRepositoryTestImpl();
     NumberReceiverFacade numberReceiverFacade;
+
 
     @BeforeEach
     public void setUp() {
@@ -112,10 +114,32 @@ public class WinningNumbersGeneratorFacadeTest {
         LocalDateTime drawDate = LocalDateTime.of(2022, 12, 17, 12, 0, 0);
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade winningNumbersGeneratorFacade = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         //then
-        assertThrows(RuntimeException.class, () -> numbersGenerator.retrieveWinningNumberByDate(drawDate),"Not Found");
+        assertThrows(RuntimeException.class, () -> winningNumbersGeneratorFacade.retrieveWinningNumberByDate(drawDate),"Not Found");
+    }
+
+    @Test
+    public void it_should_return_true_if_numbers_are_generated_by_given_date() {
+        //given
+        LocalDateTime drawDate = LocalDateTime.of(2022, 12, 17, 12, 0, 0);
+        Set<Integer> generatedWinningNumbers = Set.of(1, 2, 3, 4, 5, 6);
+        String id = UUID.randomUUID().toString();
+        WinningNumbers winningNumbers = WinningNumbers.builder()
+                .id(id)
+                .date(drawDate)
+                .winningNumbers(generatedWinningNumbers)
+                .build();
+        winningNumbersRepository.save(winningNumbers);
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        //when
+        boolean areWinningNumbersGeneratedByDate = numbersGenerator.areWinningNumbersGeneratedByDate();
+        //then
+        assertTrue(areWinningNumbersGeneratedByDate);
+
     }
 }
 

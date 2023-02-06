@@ -9,10 +9,14 @@ public class NumberGeneratorConfiguration {
 
 
     @Bean
-    WinningNumbersGeneratorFacade winningNumbersGeneratorFacade( WinningNumbersRepository winningNumbersRepository, NumberReceiverFacade numberReceiverFacade) {
-        RandomNumberGenerable randomNumberGenerator = new RandomGenerator();
+    WinningNumbersGeneratorFacade winningNumbersGeneratorFacade(WinningNumbersRepository winningNumbersRepository, NumberReceiverFacade numberReceiverFacade, RandomNumberGenerable randomNumberGenerator) {
         WinningNumberValidator winningNumberValidator = new WinningNumberValidator();
         return new WinningNumbersGeneratorFacade(randomNumberGenerator, winningNumberValidator,winningNumbersRepository, numberReceiverFacade);
+    }
+
+    @Bean
+    RandomNumberGenerable randomNumberGenerable () {
+        return new RandomGenerator();
     }
 
 

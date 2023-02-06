@@ -2,6 +2,6 @@ lotto:
   numberGenerator:
     lotteryRunOccurrence: "*/2 * * * * *"
 
-#  resultChecker:
-#    lotteryRunOccurrence: "*/4 * * * * *"
+  resultChecker:
+    lotteryRunOccurrence: "*/2 * * * * *"
 

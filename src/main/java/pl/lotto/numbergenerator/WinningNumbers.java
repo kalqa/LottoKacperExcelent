@@ -11,7 +11,7 @@ import java.util.Set;
 @Builder
 @Data
 @Document
-public class WinningNumbers {
+class WinningNumbers {
 
     @Id
     private String id;
