@@ -141,6 +141,19 @@ public class WinningNumbersGeneratorFacadeTest {
         assertTrue(areWinningNumbersGeneratedByDate);
 
     }
+
+    @Test
+    public void it_should_return_winning_numbers_if_already_generated() {
+        //given
+        RandomNumberGenerable generator = new RandomGenerator();
+        when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
+        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        numbersGenerator.generateWinningNumbers();
+        //when
+        WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
+        //then
+        assertThat(generatedNumbers.getWinningNumbers().size()).isEqualTo(6);
+    }
 }
 
 

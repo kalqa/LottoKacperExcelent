@@ -27,6 +27,7 @@ import pl.lotto.resultchecker.ResultCheckerFacade;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -117,22 +118,23 @@ public class LottoUserWinnerIntegrationTest {
                         return false;
                     }
                 });
+        //step 4: clock is adjusted to 1 hour after announcement time
+        clock.plusHours(3);
+        //step 5: user send GET /results/id expected message : Congratulations, you won!
 
-        //step 4: user send GET /results/id expected message : Congratulations, you won!
-
+        clock.plusDaysAndMinutes(3,1);
         String ticketHash = result.ticketDto().getHash();
-        ResultActions performGetMethod = mockMvc.perform(get("/results/id")
-                .param("id", ticketHash)
-        );
+        ResultActions performGetMethod = mockMvc.perform(get("/results/"+ticketHash));
 
         MvcResult mvcResultGetMethod = performGetMethod.andExpect(status().isOk()).andReturn();
 
         String jsonGetMethod = mvcResultGetMethod.getResponse().getContentAsString();
         ResultAnnouncerResponseDto finalResult = objectMapper.readValue(jsonGetMethod, ResultAnnouncerResponseDto.class);
-
+        Set<Integer> hitNumbers = result.ticketDto().getNumbers();
         assertAll(
                 () -> assertThat(finalResult.message()).isEqualTo("Congratulations, you won!"),
-                () -> assertThat(finalResult.responseDto().getHash()).isEqualTo(ticketHash));
+                () -> assertThat(finalResult.responseDto().getHash()).isEqualTo(ticketHash),
+                () -> assertThat(finalResult.responseDto().getHitNumbers()).isEqualTo(hitNumbers));
 
     }
 }
