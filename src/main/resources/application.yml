@@ -8,5 +8,17 @@ lotto:
     drawHour: 12
     drawMinutes: 0
     drawSeconds: 0
-  numberGenerator:
+  number-generator:
+    facade:
+      maximalWinningNumbers: 6
+      lowestNumber: 1
+      maxNumber: 99
     lotteryRunOccurrence: "${lotto.time.drawSeconds} ${lotto.time.drawMinutes} ${lotto.time.drawHour} * * ${lotto.time.drawDayOfWeek}"
+    http:
+      client:
+        config:
+          uri: http://www.randomnumberapi.com
+          port: 80
+  resultChecker:
+    lotteryRunOccurrence: "${lotto.time.drawSeconds} 5 ${lotto.time.drawHour} * * ${lotto.time.drawDayOfWeek}"
+

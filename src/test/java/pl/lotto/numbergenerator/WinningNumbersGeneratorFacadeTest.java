@@ -30,9 +30,9 @@ public class WinningNumbersGeneratorFacadeTest {
     @Test
     public void it_should_return_set_of_required_size() {
         //given
-        RandomNumberGenerable generator = new RandomGenerator();
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -42,9 +42,9 @@ public class WinningNumbersGeneratorFacadeTest {
     @Test
     public void it_should_return_set_of_required_size_within_required_range() {
         //given
-        RandomNumberGenerable generator = new RandomGenerator();
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -62,7 +62,7 @@ public class WinningNumbersGeneratorFacadeTest {
         Set<Integer> numbersOutOfRange = Set.of(1, 2, 3, 4, 5, 100);
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl(numbersOutOfRange);
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         //then
         assertThrows(IllegalStateException.class, numbersGenerator::generateWinningNumbers, "Number out of range!");
@@ -75,7 +75,7 @@ public class WinningNumbersGeneratorFacadeTest {
         //given
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();
         //then
@@ -97,7 +97,7 @@ public class WinningNumbersGeneratorFacadeTest {
         winningNumbersRepository.save(winningNumbers);
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         WinningNumbersDto winningNumbersDto = numbersGenerator.retrieveWinningNumberByDate(drawDate);
         //then
@@ -114,7 +114,7 @@ public class WinningNumbersGeneratorFacadeTest {
         LocalDateTime drawDate = LocalDateTime.of(2022, 12, 17, 12, 0, 0);
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
-        WinningNumbersGeneratorFacade winningNumbersGeneratorFacade = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade winningNumbersGeneratorFacade = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         //then
         assertThrows(RuntimeException.class, () -> winningNumbersGeneratorFacade.retrieveWinningNumberByDate(drawDate),"Not Found");
@@ -134,7 +134,7 @@ public class WinningNumbersGeneratorFacadeTest {
         winningNumbersRepository.save(winningNumbers);
         RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(drawDate);
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         //when
         boolean areWinningNumbersGeneratedByDate = numbersGenerator.areWinningNumbersGeneratedByDate();
         //then
@@ -145,9 +145,9 @@ public class WinningNumbersGeneratorFacadeTest {
     @Test
     public void it_should_return_winning_numbers_if_already_generated() {
         //given
-        RandomNumberGenerable generator = new RandomGenerator();
+        RandomNumberGenerable generator = new WinningNumberGeneratorTestImpl();
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
-        WinningNumbersGeneratorFacade numbersGenerator = new NumberGeneratorConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
+        WinningNumbersGeneratorFacade numbersGenerator = new WinningNumbersConfiguration().createForTest(generator, winningNumbersRepository, numberReceiverFacade);
         numbersGenerator.generateWinningNumbers();
         //when
         WinningNumbersDto generatedNumbers = numbersGenerator.generateWinningNumbers();

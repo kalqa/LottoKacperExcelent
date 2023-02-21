@@ -1,4 +1,4 @@
-package pl.lotto.feature;
+package pl.lotto;
 
 import java.time.*;
 import java.util.Set;
@@ -16,11 +16,5 @@ public class IntegrationConfiguration {
     @Primary
     AdjustableClockIntegration clock(){
         return AdjustableClockIntegration.ofLocalDateAndLocalTime(LocalDate.of(2022, 11,16),LocalTime.of(10,0),ZoneId.systemDefault());
-    }
-
-    @Bean
-    @Primary
-    RandomNumberGenerable randomNumberGenerable() {
-        return () -> Set.of(1,2,3,4,5,6);
     }
 }

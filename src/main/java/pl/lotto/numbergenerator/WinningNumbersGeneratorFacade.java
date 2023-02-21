@@ -1,36 +1,37 @@
 package pl.lotto.numbergenerator;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.lotto.numbergenerator.dto.WinningNumbersDto;
 import pl.lotto.numberreceiver.NumberReceiverFacade;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-
 @AllArgsConstructor
 @Slf4j
 public class WinningNumbersGeneratorFacade {
+
 
     RandomNumberGenerable winningNumberGenerator;
     WinningNumberValidator winningNumberValidator;
     WinningNumbersRepository winningNumbersRepository;
     NumberReceiverFacade numberReceiverFacade;
+    WinningNumbersFacadeProperties properties;
 
     public WinningNumbersDto generateWinningNumbers() {
         log.info("generateWinningNumbers started");
         LocalDateTime nextDrawDate = numberReceiverFacade.retrieveNextDrawDate();
         Optional<WinningNumbers> numbersByDate = winningNumbersRepository.findNumbersByDate(nextDrawDate);
-        if(numbersByDate.isPresent()) {
+        if (numbersByDate.isPresent()) {
             log.info("numbers are already generated");
             return WinningNumbersDto.builder()
                     .winningNumbers(numbersByDate.get().getWinningNumbers())
                     .build();
         }
 
-        Set<Integer> winningNumbers = winningNumberGenerator.generateSixRandomNumbers();
+        Set<Integer> winningNumbers = winningNumberGenerator.generateSixRandomNumbers(properties.maximalWinningNumbers(), properties.lowestNumber(), properties.maxNumber()).numbers();
         log.info(Arrays.toString(winningNumbers.toArray()));
         winningNumberValidator.validate(winningNumbers);
         winningNumbersRepository.save(WinningNumbers.builder()
@@ -54,7 +55,7 @@ public class WinningNumbersGeneratorFacade {
                 .build();
     }
 
-    public boolean areWinningNumbersGeneratedByDate(){
+    public boolean areWinningNumbersGeneratedByDate() {
         LocalDateTime nextDrawDate = numberReceiverFacade.retrieveNextDrawDate();
         return winningNumbersRepository.existsByDate(nextDrawDate);
     }
