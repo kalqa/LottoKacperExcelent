@@ -44,7 +44,7 @@ public class BaseIntegrationTest {
     public ObjectMapper objectMapper;
 
     @Autowired
-    public AdjustableClockIntegration clock;
+    public AdjustableClock clock;
 
     @RegisterExtension
     public static WireMockExtension wireMockServer = WireMockExtension.newInstance()

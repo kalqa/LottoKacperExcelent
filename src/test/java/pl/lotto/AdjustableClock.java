@@ -32,7 +32,7 @@ public class AdjustableClock extends Clock {
         if (zone.equals(this.zone)) {  // intentional NPE
             return this;
         }
-        return new AdjustableClockIntegration(instant, zone);
+        return new AdjustableClock(instant, zone);
     }
 
     @Override
@@ -71,6 +71,16 @@ public class AdjustableClock extends Clock {
         advanceInTimeBy(offset);
     }
 
+    public void plusHours( int hours) {
+        Duration offset = Duration.ofHours(hours);
+        advanceInTimeBy(offset);
+    }
+
+    public void plusMinutes( int minutes) {
+        Duration offset = Duration.ofHours(minutes);
+        advanceInTimeBy(offset);
+    }
+
     public void plusDaysAndMinutes(int days, int minutes) {
         Duration offset = Duration.ofDays(days);
         advanceInTimeBy(offset);
@@ -92,6 +102,5 @@ public class AdjustableClock extends Clock {
         LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now(this), localTime);
         setClockToLocalDateTime(localDateTime);
     }
-
 }
 

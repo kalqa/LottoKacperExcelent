@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.lotto.BaseIntegrationTest;
+import pl.lotto.numbergenerator.WinningNumbersNotFoundException;
 import pl.lotto.numberreceiver.dto.NumberReceiverResponseDto;
 import pl.lotto.resultannouncer.dto.ResultAnnouncerResponseDto;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +20,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LottoUserWinnerIntegrationTest extends BaseIntegrationTest {
@@ -36,7 +38,23 @@ public class LottoUserWinnerIntegrationTest extends BaseIntegrationTest {
                                           """.trim()
                         )));
 
-        //step 2: user made POST /inputNumbers with 6 numbers (1, 2, 3, 4, 5, 6) at 16-11-2022 10:00 and got Ticket (DrawDate:19.11.2022 12:00, Hash: 123, message: “Success”)
+
+        //step 2: system generated winning numbers for draw date: 19.11.2022 12:00
+        // given
+        LocalDateTime ticketDrawDate = LocalDateTime.of(2022, 11, 19, 12, 0, 0);
+        // when then
+        await().atMost(20, TimeUnit.SECONDS)
+                .pollInterval(Duration.ofSeconds(1L))
+                .until(() -> {
+                    try {
+                        return !winningNumbersGeneratorFacade.retrieveWinningNumberByDate(ticketDrawDate).getWinningNumbers().isEmpty();
+                    } catch (WinningNumbersNotFoundException e) {
+                        return false;
+                    }
+                });
+
+
+        //step 3: user made POST /inputNumbers with 6 numbers (1, 2, 3, 4, 5, 6) at 16-11-2022 10:00 and got Ticket (DrawDate:19.11.2022 12:00, Hash: 123, message: “Success”)
         // given && when
         ResultActions perform = mockMvc.perform(post("/inputNumbers")
                 .content("""
@@ -51,31 +69,36 @@ public class LottoUserWinnerIntegrationTest extends BaseIntegrationTest {
         MvcResult mvcResult = perform.andExpect(status().isOk()).andReturn();
         String json = mvcResult.getResponse().getContentAsString();
         NumberReceiverResponseDto result = objectMapper.readValue(json, NumberReceiverResponseDto.class);
-        LocalDateTime ticketDrawDate = LocalDateTime.of(2022, 11, 19, 12, 0, 0);
         assertAll(
                 () -> assertThat(result.message()).isEqualTo("SUCCESS"),
                 () -> assertThat(result.ticketDto().getDrawDate()).isEqualTo(ticketDrawDate));
 
 
-        //step 3: system generated winning numbers for draw date: 19.11.2022 12:00
-        // given && when && then
-        await().atMost(20, TimeUnit.SECONDS)
-                .pollInterval(Duration.ofSeconds(1L))
-                .until(() -> {
-                    try {
-                        return !winningNumbersGeneratorFacade.retrieveWinningNumberByDate(ticketDrawDate).getWinningNumbers().isEmpty();
-                    } catch (RuntimeException e) {
-                        return false;
-                    }
-                });
+        //step 4: user made GET /results/notExistingId and system returned 404(NOT_FOUND) and body with (message: Not found for id: notExistingId and status NOT_FOUND)
+        // given
+        String ticketHash1 = "notExistingId";
+
+        // when
+        ResultActions performGetMethod1 = mockMvc.perform(get("/results/" + ticketHash1));
+
+        // then
+        performGetMethod1.andExpect(status().isNotFound())
+                .andExpect(content().json(
+                        """
+                                {
+                                "message": "Not found for id: notExistingId",
+                                "status": "NOT_FOUND"
+                                }
+                                """
+                )).andReturn();
 
 
-        //step 4: 3 days and 1 minute passed, and it is 1 minute after draw (19.11.2022 12:01)
+        //step 5: 3 days and 1 minute passed, and it is 1 minute after draw (19.11.2022 12:01)
         // given && when && then
         clock.plusDaysAndMinutes(3, 1);
 
 
-        //step 5: system generated result for TicketId: 123 with draw date 19.11.2022 12:00, and saved it with 6 hits
+        //step 6: system generated result for TicketId: 123 with draw date 19.11.2022 12:00, and saved it with 6 hits
         // given && when && then
         await().atMost(20, TimeUnit.SECONDS)
                 .pollInterval(Duration.ofSeconds(1L))
@@ -89,12 +112,12 @@ public class LottoUserWinnerIntegrationTest extends BaseIntegrationTest {
                 });
 
 
-        //step 6: 3 hours passed, and it is 1 minute after announcement time (19.11.2022 15:01)
+        //step 7: 3 hours passed, and it is 1 minute after announcement time (19.11.2022 15:01)
         // given && when && then
         clock.plusHours(3);
 
 
-        //step 7: user send GET /results/id expected message : Congratulations, you won!
+        //step 8: ser made GET /results/sampleTicketId and system returned 200 (OK)
         // given
         String ticketHash = result.ticketDto().getHash();
 

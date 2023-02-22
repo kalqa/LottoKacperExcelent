@@ -35,6 +35,7 @@
             <version>${wiremock-jre8.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--  SPRING BOOT -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -54,6 +55,7 @@
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--        ASSERT J-->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -95,6 +97,7 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--  AWAITILITY -->
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>

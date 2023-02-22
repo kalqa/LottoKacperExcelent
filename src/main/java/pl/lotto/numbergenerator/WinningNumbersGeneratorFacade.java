@@ -47,7 +47,7 @@ public class WinningNumbersGeneratorFacade {
     public WinningNumbersDto retrieveWinningNumberByDate(LocalDateTime date) {
         log.info("retrieveWinningNumberByDate started");
         WinningNumbers numbersByDate = winningNumbersRepository.findNumbersByDate(date)
-                .orElseThrow(() -> new RuntimeException("Not Found"));
+                .orElseThrow(() -> new WinningNumbersNotFoundException("Not Found"));
         log.info("retrieveWinningNumberByDate finished");
         return WinningNumbersDto.builder()
                 .winningNumbers(numbersByDate.getWinningNumbers())
