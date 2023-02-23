@@ -1,6 +1,7 @@
 package pl.lotto.infrastructure.controller.numberreceiver;
 
 
+import javax.validation.Valid;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class NumberReceiverRestController {
     private final NumberReceiverFacade numberReceiverFacade;
 
     @PostMapping("/inputNumbers")
-    public ResponseEntity<NumberReceiverResponseDto> f(@RequestBody NumberReceiverRequestDto requestDto) {
+    public ResponseEntity<NumberReceiverResponseDto> inputNumbers(@RequestBody @Valid NumberReceiverRequestDto requestDto) {
         NumberReceiverResponseDto numberReceiverResponseDto = numberReceiverFacade.inputNumbers(requestDto.inputNumbers());
         return ResponseEntity.ok(numberReceiverResponseDto);
     }
